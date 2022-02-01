@@ -1,0 +1,94 @@
+.angry-grid {
+    display: grid;
+    grid-template-rows: 4rem auto 45px;
+    grid-template-columns: 16rem auto;
+    gap: 3px;
+    height: 100%;
+    font-family: 'Nanum Pen Script', cursive;
+}
+
+#titleCell {
+    background-color: #a3a3a3;
+    grid-row-start: 1;
+    grid-column-start: 2;
+    grid-row-end: 2;
+    grid-column-end: 3;
+    font-family: 'Annie Use Your Telescope', cursive;
+}
+
+h1 {
+    margin-top: -1px;
+    padding-left: 10px;
+    font-size: 3em;
+}
+
+#sidebarCell {
+    background-color: #385b94;
+    grid-row-start: 2;
+    grid-column-start: 1;
+    grid-row-end: 4;
+    grid-column-end: 2;
+    font-size: 1.5em;
+    padding: 10px;
+}
+
+#bodyCell {
+    background-color: #d0d9e6;
+    grid-row-start: 2;
+    grid-column-start: 2;
+    grid-row-end: 3;
+    grid-column-end: 3;
+    padding: 20px;
+}
+
+#footerCell {
+    background-color: #151127;
+    grid-row-start: 3;
+    grid-column-start: 2;
+    grid-row-end: 4;
+    grid-column-end: 3;
+    color: white;
+}
+
+#logoCell {
+    background-color: #2b4c81;
+    grid-row-start: 1;
+    grid-column-start: 1;
+    grid-row-end: 2;
+    grid-column-end: 2;
+}
+
+#gameArea {
+    display: grid;
+    grid-template-columns: repeat(5, 5em);
+    grid-template-rows: repeat(20, 5em);
+    grid-gap: 10px;
+    /*background-color: white;*/
+}
+/*
+#gameArea div {
+    border: black;
+    border-width: 5px;
+}
+*/
+.gamePiece {
+    background-color: rgb(253, 206, 188);
+    text-align: center;
+    cursor: move;
+}
+
+.gamePiece.over {
+    background-color: lightblue;
+}
+
+.gamePiece.eval {
+    background-color: rgb(255, 126, 51);
+}
+
+h3 {
+    padding: 1em;
+}
+
+h6 {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
