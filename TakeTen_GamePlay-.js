@@ -16,8 +16,37 @@ GamePlay-
         i. =0, win game!
 */
 
-function rightProximity() {
-    return false
+function rightProximity(row1, column1, row2, column2) {
+    //eval each row and column separately but both must be true to pass
+    switch (row1 - row2){
+        case -1:
+            row = true;
+            break;
+        case 0:
+            row = false;
+            break;
+        case 1:
+            row = true;
+            break;
+        default:
+            row = false;        
+    }
+    switch (column1 - column2) {
+        case -1:
+            column = true;
+            break;
+        case 0:
+            column = false;
+            break;
+        case 1:
+            column = true;
+            break;
+        default:
+            column = false;
+    }
+    //logical conjunction for a set of Boolean operands will be true 
+    //if and only if all the operands are true. Otherwise it will be false.
+    return row && column
 }
 
 function valueMatch() {
@@ -59,7 +88,7 @@ for (let i = 0; i < gameTable.length; i++) {
     // loop the inner array
     for (let j = 0; j < innerArrayLength; j++) {
         //make the game table into HTML to be displayed
-        text += '<div class=gamePiece id=' + i + j + ' draggable="true"><h3>' + gameTable[i][j] + '</h3></div>';
+        text += '<div class=gamePiece id=' + i + '-' + j + ' draggable="true"><h3>' + gameTable[i][j] + '</h3></div>';
     }
 }
 //put the pieces into the game area on the HTML page
@@ -110,8 +139,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         e.stopPropagation(); // stops the browser from redirecting.
         if (dragSrcEl !== this) {
             //if you didn't drop back in same place, do this-
-            dragSrcEl.innerHTML = this.innerHTML;
-            document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id;
+            //dragSrcEl.innerHTML = this.innerHTML;
+            let cell1 = dragSrcEl.id.split("-")
+            let cell2 = this.id.split("-")
+            let showResults = rightProximity(cell1[0], cell1[1], cell2[0], cell2[1])
+            document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
         }
         return false;
     }
