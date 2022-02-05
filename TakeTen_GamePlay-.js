@@ -85,11 +85,13 @@ let text = ""
 for (let i = 0; i < gameTable.length; i++) {
     // get the size of the inner array
     var innerArrayLength = gameTable[i].length;
+    text += '<div class=column>' // + i + '>'
     // loop the inner array
     for (let j = 0; j < innerArrayLength; j++) {
         //make the game table into HTML to be displayed
         text += '<div class=gamePiece id=' + i + '-' + j + ' draggable="true"><h3>' + gameTable[i][j] + '</h3></div>';
     }
+    text += '</div>'
 }
 //put the pieces into the game area on the HTML page
 document.getElementById("gameArea").innerHTML += text
@@ -140,9 +142,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (dragSrcEl !== this) {
             //if you didn't drop back in same place, do this-
             //dragSrcEl.innerHTML = this.innerHTML;
-            let cell1 = dragSrcEl.id.split("-")
-            let cell2 = this.id.split("-")
-            let showResults = rightProximity(cell1[0], cell1[1], cell2[0], cell2[1])
+            let cell1 = dragSrcEl.id.split("-");
+            let cell2 = this.id.split("-");
+            let showResults = rightProximity(cell1[0], cell1[1], cell2[0], cell2[1]);
+            if (showResults) {
+                //this is correct! Show response!
+                dragSrcEl.classList.add('right');
+                this.classList.add('right');
+
+                dragSrcEl.classList.remove('right');
+                this.classList.remove('right');
+
+            } else {
+                //you got it wrong, show response!
+                dragSrcEl.classList.add('wrong');
+                this.classList.add('wrong');
+
+                dragSrcEl.classList.remove('wrong');
+                this.classList.remove('wrong');
+                
+            }
             document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
         }
         return false;

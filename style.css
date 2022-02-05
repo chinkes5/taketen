@@ -58,12 +58,20 @@ h1 {
     grid-column-end: 2;
 }
 
+.column {
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: nowrap;
+}
+
 #gameArea {
-    display: grid;
+    /* display: grid;
     grid-template-columns: repeat(5, 5em);
     grid-template-rows: repeat(20, 5em);
-    grid-gap: 10px;
-    /*background-color: white;*/
+    grid-gap: 10px; */
+    background-color: white;
+    display: flex;
+    flex-direction: row;
 }
 /*
 #gameArea div {
@@ -75,6 +83,9 @@ h1 {
     background-color: rgb(253, 206, 188);
     text-align: center;
     cursor: move;
+    width: 3em;
+    height: 2em;
+    padding: 5px;
 }
 
 .gamePiece.over {
@@ -83,6 +94,20 @@ h1 {
 
 .gamePiece.eval {
     background-color: rgb(255, 126, 51);
+}
+
+.gamePiece.right {
+    background-color: green;
+    animation: blinking-background 20ms;
+}
+
+.gamePiece.wrong {
+    background-color: red;
+    animation: blinking-background 20ms;
+}
+
+@keyframes blinkingBackground{
+    50%		{ background-color: white;}
 }
 
 h3 {
