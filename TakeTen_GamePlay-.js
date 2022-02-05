@@ -23,7 +23,7 @@ function rightProximity(row1, column1, row2, column2) {
             row = true;
             break;
         case 0:
-            row = false;
+            row = true;
             break;
         case 1:
             row = true;
@@ -36,7 +36,7 @@ function rightProximity(row1, column1, row2, column2) {
             column = true;
             break;
         case 0:
-            column = false;
+            column = true;
             break;
         case 1:
             column = true;
