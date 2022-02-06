@@ -15,10 +15,17 @@ GamePlay-
     d. how many cells left?
         i. =0, win game!
 */
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+}
 
 function rightProximity(row1, column1, row2, column2) {
     //eval each row and column separately but both must be true to pass
-    switch (row1 - row2){
+    switch (row1 - row2) {
         case -1:
             row = true;
             break;
@@ -29,7 +36,7 @@ function rightProximity(row1, column1, row2, column2) {
             row = true;
             break;
         default:
-            row = false;        
+            row = false;
     }
     switch (column1 - column2) {
         case -1:
@@ -50,12 +57,15 @@ function rightProximity(row1, column1, row2, column2) {
 }
 
 function valueMatch(cell1, cell2) {
-    if(cell1 + cell2 === 10){
+    if (parseInt(cell1) + parseInt(cell2) === 10) {
+        console.log('value matched as total of 10')
         return 'ten'
     }
     if (cell1 === cell2) {
+        console.log('value matched as pair')
         return 'pair'
     }
+    console.log('got: ' + cell1 + ' and ' + cell2 + ' so no match...')
     return false
 }
 
@@ -63,12 +73,10 @@ function howBigTable() {
     return false
 }
 
-function showFailure() {
-    return false
-}
-
-function showSuccess() {
-    return false
+function removeCells(cell1ID, cell2ID) {
+    document.getElementById(cell1ID).remove();
+    document.getElementById(cell2ID).remove();
+    console.log('removed ' + cell1ID + ' and ' + cell2ID)
 }
 
 //helpful pages - 
@@ -95,7 +103,7 @@ for (let i = 0; i < gameTable.length; i++) {
     // loop the inner array
     for (let j = 0; j < innerArrayLength; j++) {
         //make the game table into HTML to be displayed
-        text += '<div class=gamePiece id=' + i + '-' + j + ' draggable="true"><h3>' + gameTable[i][j] + '</h3></div>';
+        text += '<div class=gamePiece id=' + i + '-' + j + ' draggable="true">' + gameTable[i][j] + '</div>';
     }
     text += '</div>'
 }
@@ -152,22 +160,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
             let cell2 = this.id.split("-");
             let showResults = rightProximity(cell1[0], cell1[1], cell2[0], cell2[1]);
             if (showResults) {
-                switch (valueMatch(dragSRCEl.innerHTML, this.innerHTML)) {
+                switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
                     case 'ten':
                         //this is correct! Show response!
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
+                        sleep(500);
+                        removeCells(dragSrcEl.id, this.id)
                         break;
                     case 'pair':
                         //this is correct! Show response!
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
+                        sleep(500);
+                        removeCells(dragSrcEl.id, this.id)
                         break;
                     default:
                         console.log('no match but should drop out of this switch')
                         break;
                 }
 
+                //start cleaning up
                 dragSrcEl.classList.remove('right');
                 this.classList.remove('right');
 
@@ -176,9 +189,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dragSrcEl.classList.add('wrong');
                 this.classList.add('wrong');
 
+                sleep(500);
+
                 dragSrcEl.classList.remove('wrong');
                 this.classList.remove('wrong');
-                
+
             }
             document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
         }
