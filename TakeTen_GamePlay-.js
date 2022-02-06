@@ -49,7 +49,13 @@ function rightProximity(row1, column1, row2, column2) {
     return row && column
 }
 
-function valueMatch() {
+function valueMatch(cell1, cell2) {
+    if(cell1 + cell2 === 10){
+        return 'ten'
+    }
+    if (cell1 === cell2) {
+        return 'pair'
+    }
     return false
 }
 
@@ -146,9 +152,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
             let cell2 = this.id.split("-");
             let showResults = rightProximity(cell1[0], cell1[1], cell2[0], cell2[1]);
             if (showResults) {
-                //this is correct! Show response!
-                dragSrcEl.classList.add('right');
-                this.classList.add('right');
+                switch (valueMatch(dragSRCEl.innerHTML, this.innerHTML)) {
+                    case 'ten':
+                        //this is correct! Show response!
+                        dragSrcEl.classList.add('right');
+                        this.classList.add('right');
+                        break;
+                    case 'pair':
+                        //this is correct! Show response!
+                        dragSrcEl.classList.add('right');
+                        this.classList.add('right');
+                        break;
+                    default:
+                        console.log('no match but should drop out of this switch')
+                        break;
+                }
 
                 dragSrcEl.classList.remove('right');
                 this.classList.remove('right');
