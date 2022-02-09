@@ -20,6 +20,7 @@ function sleep(milliseconds) {
     let currentDate = null;
     do {
         currentDate = Date.now();
+        console.log('waiting')
     } while (currentDate - date < milliseconds);
 }
 
@@ -118,9 +119,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         //make slightly transparent and store the object being drug
         this.style.opacity = '0.4';
         dragSrcEl = this;
+        startPosition = this.getBoundingClientRect();
 
         e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.innerHTML);
+        //don't think I need this, not moving the cell value into the other 
+        // e.dataTransfer.setData('text/html', this.innerHTML);
     }
 
     function handleDragOver(e) {
@@ -128,7 +131,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             e.preventDefault();
             //default is to try and load the dropped item as a URL
         }
-        //this.classList.add('eval');
+        // this.classList.add('under');
         return false;
     }
 
@@ -155,21 +158,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
         e.stopPropagation(); // stops the browser from redirecting.
         if (dragSrcEl !== this) {
             //if you didn't drop back in same place, do this-
+
             //dragSrcEl.innerHTML = this.innerHTML;
+            endPosition = this.getBoundingClientRect();
+            console.log('box size +10%= ' + (endPosition.height*1.1) + 'x' + (endPosition.width*1.1))
+            console.log('range allowed x: ' + (startPosition.x - endPosition.x))
+            console.log('range allowed y: ' + (startPosition.y - endPosition.y))
+
             let cell1 = dragSrcEl.id.split("-");
             let cell2 = this.id.split("-");
             let showResults = rightProximity(cell1[0], cell1[1], cell2[0], cell2[1]);
             if (showResults) {
                 switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
                     case 'ten':
-                        //this is correct! Show response!
+                        console.log('this is correct! Show response!')
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
                         sleep(500);
                         removeCells(dragSrcEl.id, this.id)
                         break;
                     case 'pair':
-                        //this is correct! Show response!
+                        console.log('this is correct! Show response!')
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
                         sleep(500);
@@ -179,20 +188,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         console.log('no match but should drop out of this switch')
                         break;
                 }
-
-                //start cleaning up
-                dragSrcEl.classList.remove('right');
-                this.classList.remove('right');
-
             } else {
-                //you got it wrong, show response!
+                console.log('got it wrong. Show response!')
                 dragSrcEl.classList.add('wrong');
                 this.classList.add('wrong');
 
                 sleep(500);
 
-                dragSrcEl.classList.remove('wrong');
-                this.classList.remove('wrong');
+                // dragSrcEl.classList.remove('wrong');
+                // this.classList.remove('wrong');
 
             }
             document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
