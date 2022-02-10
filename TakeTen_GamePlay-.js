@@ -26,7 +26,8 @@ function sleep(milliseconds) {
 
 function rightProximity(row1, column1, row2, column2) {
     //eval each row and column separately but both must be true to pass
-    switch (row1 - row2) {
+    let boxsize = document.getElementById('0-0').getBoundingClientRect();
+    switch ((boxsize.width*1.2)-(row1 - row2)) {
         case -1:
             row = true;
             break;
@@ -39,7 +40,7 @@ function rightProximity(row1, column1, row2, column2) {
         default:
             row = false;
     }
-    switch (column1 - column2) {
+    switch ((boxsize.height*1.2)-(column1 - column2)) {
         case -1:
             column = true;
             break;
@@ -58,11 +59,11 @@ function rightProximity(row1, column1, row2, column2) {
 }
 
 function valueMatch(cell1, cell2) {
-    if (parseInt(cell1) + parseInt(cell2) === 10) {
+    if (parseInt(cell1) + parseInt(cell2) == 10) {
         console.log('value matched as total of 10')
         return 'ten'
     }
-    if (cell1 === cell2) {
+    if (cell1 == cell2) {
         console.log('value matched as pair')
         return 'pair'
     }
@@ -110,6 +111,7 @@ for (let i = 0; i < gameTable.length; i++) {
 }
 //put the pieces into the game area on the HTML page
 document.getElementById("gameArea").innerHTML += text
+document.getElementById("score").innerHTML = 0
 
 //drag and drop - https://www.w3schools.com/html/html5_draganddrop.asp or 
 //https://web.dev/drag-and-drop/
@@ -161,19 +163,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             //dragSrcEl.innerHTML = this.innerHTML;
             endPosition = this.getBoundingClientRect();
-            console.log('box size +10%= ' + (endPosition.height*1.1) + 'x' + (endPosition.width*1.1))
-            console.log('range allowed x: ' + (startPosition.x - endPosition.x))
-            console.log('range allowed y: ' + (startPosition.y - endPosition.y))
 
-            let cell1 = dragSrcEl.id.split("-");
-            let cell2 = this.id.split("-");
-            let showResults = rightProximity(cell1[0], cell1[1], cell2[0], cell2[1]);
+            let showResults = rightProximity(startPosition.x, endPosition.x, startPosition.y, endPosition.y);
             if (showResults) {
                 switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
                     case 'ten':
                         console.log('this is correct! Show response!')
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
+
+                        score = document.getElementById("score").innerHTML + 10;
+                        document.getElementById("score").innerHTML = score;
                         sleep(500);
                         removeCells(dragSrcEl.id, this.id)
                         break;
@@ -181,6 +181,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         console.log('this is correct! Show response!')
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
+
+                        score = document.getElementById("score").innerHTML + 8;
+                        document.getElementById("score").innerHTML = score;
+
                         sleep(500);
                         removeCells(dragSrcEl.id, this.id)
                         break;
@@ -199,7 +203,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 // this.classList.remove('wrong');
 
             }
-            document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
+            //document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
         }
         return false;
     }
