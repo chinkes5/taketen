@@ -20,38 +20,31 @@ function sleep(milliseconds) {
     let currentDate = null;
     do {
         currentDate = Date.now();
-        console.log('waiting')
+        console.log('waiting');
     } while (currentDate - date < milliseconds);
 }
 
 function rightProximity(row1, column1, row2, column2) {
     //eval each row and column separately but both must be true to pass
     let boxsize = document.getElementById('0-0').getBoundingClientRect();
-    switch ((boxsize.width*1.2)-(row1 - row2)) {
-        case -1:
-            row = true;
-            break;
-        case 0:
-            row = true;
-            break;
-        case 1:
-            row = true;
-            break;
-        default:
-            row = false;
+    let threshold = 1.2;
+    console.log('x distance: ' + -(row1 - row2));
+    console.log('max range: ' + (boxsize.width * threshold));
+    if ((boxsize.width * threshold) < (row1 - row2) && (boxsize.width * threshold) > -(row1 - row2)) {
+        row = true;
     }
-    switch ((boxsize.height*1.2)-(column1 - column2)) {
-        case -1:
-            column = true;
-            break;
-        case 0:
-            column = true;
-            break;
-        case 1:
-            column = true;
-            break;
-        default:
-            column = false;
+    else {
+        row = false;
+        console.log('too far X');
+    }
+    console.log('y distance: ' + -(column1 - column2));
+    console.log('max range: ' + (boxsize.height * threshold));
+    if ((boxsize.height * threshold) < (column1 - column2) && (boxsize.height * threshold) > -(column1 - column2)) {
+        column = true;
+    }
+    else {
+        column = false;
+        console.log('too far Y');
     }
     //logical conjunction for a set of Boolean operands will be true 
     //if and only if all the operands are true. Otherwise it will be false.
@@ -60,25 +53,21 @@ function rightProximity(row1, column1, row2, column2) {
 
 function valueMatch(cell1, cell2) {
     if (parseInt(cell1) + parseInt(cell2) == 10) {
-        console.log('value matched as total of 10')
-        return 'ten'
+        console.log('value matched as total of 10');
+        return 'ten';
     }
     if (cell1 == cell2) {
-        console.log('value matched as pair')
-        return 'pair'
+        console.log('value matched as pair');
+        return 'pair';
     }
-    console.log('got: ' + cell1 + ' and ' + cell2 + ' so no match...')
-    return false
-}
-
-function howBigTable() {
-    return false
+    console.log('got: ' + cell1 + ' and ' + cell2 + ' so no match...');
+    return false;
 }
 
 function removeCells(cell1ID, cell2ID) {
     document.getElementById(cell1ID).remove();
     document.getElementById(cell2ID).remove();
-    console.log('removed ' + cell1ID + ' and ' + cell2ID)
+    console.log('removed ' + cell1ID + ' and ' + cell2ID);
 }
 
 //helpful pages - 
@@ -101,17 +90,17 @@ let text = ""
 for (let i = 0; i < gameTable.length; i++) {
     // get the size of the inner array
     var innerArrayLength = gameTable[i].length;
-    text += '<div class=column>' // + i + '>'
+    text += '<div class=column>'; // + i + '>'
     // loop the inner array
     for (let j = 0; j < innerArrayLength; j++) {
         //make the game table into HTML to be displayed
         text += '<div class=gamePiece id=' + i + '-' + j + ' draggable="true">' + gameTable[i][j] + '</div>';
     }
-    text += '</div>'
+    text += '</div>';
 }
 //put the pieces into the game area on the HTML page
-document.getElementById("gameArea").innerHTML += text
-document.getElementById("score").innerHTML = 0
+document.getElementById("gameArea").innerHTML += text;
+document.getElementById("score").innerHTML = 0;
 
 //drag and drop - https://www.w3schools.com/html/html5_draganddrop.asp or 
 //https://web.dev/drag-and-drop/
@@ -172,28 +161,28 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
 
-                        score = document.getElementById("score").innerHTML + 10;
-                        document.getElementById("score").innerHTML = score;
+                        score = document.getElementById("score").innerHTML;
+                        document.getElementById("score").innerHTML = score + 10;
                         sleep(500);
-                        removeCells(dragSrcEl.id, this.id)
+                        removeCells(dragSrcEl.id, this.id);
                         break;
                     case 'pair':
-                        console.log('this is correct! Show response!')
+                        console.log('this is correct! Show response!');
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
 
                         score = document.getElementById("score").innerHTML + 8;
-                        document.getElementById("score").innerHTML = score;
+                        document.getElementById("score").innerHTML = score + 8;
 
                         sleep(500);
-                        removeCells(dragSrcEl.id, this.id)
+                        removeCells(dragSrcEl.id, this.id);
                         break;
                     default:
                         console.log('no match but should drop out of this switch')
                         break;
                 }
             } else {
-                console.log('got it wrong. Show response!')
+                console.log('got it wrong. Show response!');
                 dragSrcEl.classList.add('wrong');
                 this.classList.add('wrong');
 
