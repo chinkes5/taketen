@@ -10,20 +10,24 @@ function sleep(milliseconds) {
 function rightProximity(row1, column1, row2, column2) {
     //eval each row and column separately but both must be true to pass
     let boxsize = document.getElementById('0-0').getBoundingClientRect();
-    let thresholdX = boxsize.width * 1.5;
+    let thresholdX = boxsize.width * 1.7;
     console.log('x distance: ' + row1 + ' - ' + row2 + ' = ' + (row1 - row2));
     console.log('max range: ' + thresholdX);
-    if (thresholdX < (row1 - row2) && -thresholdX > (row1 - row2)) {
+    console.log(thresholdX > (row1 - row2));
+    console.log(-thresholdX < (row1 - row2));
+    if (thresholdX > (row1 - row2) && -thresholdX < (row1 - row2)) {
         row = true;
     }
     else {
         row = false;
         console.log('too far X');
     }
-    let thresholdY = boxsize.height * 1.5;
+    let thresholdY = boxsize.height * 1.7;
     console.log('y distance: ' + column1 + ' - ' + column2 + ' = ' + (column1 - column2));
     console.log('max range: ' + thresholdY);
-    if (thresholdY < (column1 - column2) && -thresholdY > (column1 - column2)) {
+    console.log(thresholdY < (column1 - column2));
+    console.log(-thresholdY < (column1 - column2));
+    if (thresholdY > (column1 - column2) && -thresholdY < (column1 - column2)) {
         column = true;
     }
     else {
@@ -135,7 +139,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             //dragSrcEl.innerHTML = this.innerHTML;
             endPosition = this.getBoundingClientRect();
 
-            let showResults = rightProximity(startPosition.x, endPosition.x, startPosition.y, endPosition.y);
+            let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y);
             if (showResults) {
                 switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
                     case 'ten':
