@@ -1,20 +1,3 @@
-/*
-GamePlay-
-1. init- 
-    a. make array x by y, random 1-9 int
-2. display in div or table?
-3. draggible div? Clickable?
-4. evaluate two cells in array
-    a. right proximity?
-    b. value match
-        i. both same?
-        ii. sum = 10?
-    c. display results
-        i. failure!
-        ii. success - redraw table removing two matches
-    d. how many cells left?
-        i. =0, win game!
-*/
 function sleep(milliseconds) {
     const date = Date.now();
     let currentDate = null;
@@ -27,19 +10,20 @@ function sleep(milliseconds) {
 function rightProximity(row1, column1, row2, column2) {
     //eval each row and column separately but both must be true to pass
     let boxsize = document.getElementById('0-0').getBoundingClientRect();
-    let threshold = 1.2;
-    console.log('x distance: ' + -(row1 - row2));
-    console.log('max range: ' + (boxsize.width * threshold));
-    if ((boxsize.width * threshold) < (row1 - row2) && (boxsize.width * threshold) > -(row1 - row2)) {
+    let thresholdX = boxsize.width * 1.5;
+    console.log('x distance: ' + row1 + ' - ' + row2 + ' = ' + (row1 - row2));
+    console.log('max range: ' + thresholdX);
+    if (thresholdX < (row1 - row2) && -thresholdX > (row1 - row2)) {
         row = true;
     }
     else {
         row = false;
         console.log('too far X');
     }
-    console.log('y distance: ' + -(column1 - column2));
-    console.log('max range: ' + (boxsize.height * threshold));
-    if ((boxsize.height * threshold) < (column1 - column2) && (boxsize.height * threshold) > -(column1 - column2)) {
+    let thresholdY = boxsize.height * 1.5;
+    console.log('y distance: ' + column1 + ' - ' + column2 + ' = ' + (column1 - column2));
+    console.log('max range: ' + thresholdY);
+    if (thresholdY < (column1 - column2) && -thresholdY > (column1 - column2)) {
         column = true;
     }
     else {
@@ -74,7 +58,7 @@ function removeCells(cell1ID, cell2ID) {
 //https://www.javascripttutorial.net/javascript-multidimensional-array/
 //https://www.w3schools.com/js/default.asp
 
-//game table will be 10 columns by 20 rows, 
+//game table will be 5 columns by 20 rows, 
 //the display will be verticle where the columns get shorter as numbers are matched
 //make each column with 20 random numbers less than 10
 let gameTable = [
@@ -85,13 +69,13 @@ let gameTable = [
     column4 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9)),
 ]
 
-// loop the outer array
+// loop the outer array to build the columns
 let text = ""
 for (let i = 0; i < gameTable.length; i++) {
     // get the size of the inner array
     var innerArrayLength = gameTable[i].length;
     text += '<div class=column>'; // + i + '>'
-    // loop the inner array
+    // loop the inner array to build the rows
     for (let j = 0; j < innerArrayLength; j++) {
         //make the game table into HTML to be displayed
         text += '<div class=gamePiece id=' + i + '-' + j + ' draggable="true">' + gameTable[i][j] + '</div>';
@@ -113,8 +97,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         startPosition = this.getBoundingClientRect();
 
         e.dataTransfer.effectAllowed = 'move';
-        //don't think I need this, not moving the cell value into the other 
-        // e.dataTransfer.setData('text/html', this.innerHTML);
     }
 
     function handleDragOver(e) {
@@ -162,7 +144,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         this.classList.add('right');
 
                         score = document.getElementById("score").innerHTML;
-                        document.getElementById("score").innerHTML = score + 10;
+                        // console.log('score is - ' + parseInt(score));
+                        document.getElementById("score").innerHTML = parseInt(score) + 10;
                         sleep(500);
                         removeCells(dragSrcEl.id, this.id);
                         break;
@@ -171,8 +154,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         dragSrcEl.classList.add('right');
                         this.classList.add('right');
 
-                        score = document.getElementById("score").innerHTML + 8;
-                        document.getElementById("score").innerHTML = score + 8;
+                        score = document.getElementById("score").innerHTML;
+                        // console.log('score is - ' + parseInt(score));
+                        document.getElementById("score").innerHTML = parseInt(score) + 8;
 
                         sleep(500);
                         removeCells(dragSrcEl.id, this.id);
@@ -185,12 +169,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 console.log('got it wrong. Show response!');
                 dragSrcEl.classList.add('wrong');
                 this.classList.add('wrong');
-
-                sleep(500);
-
-                // dragSrcEl.classList.remove('wrong');
-                // this.classList.remove('wrong');
-
             }
             //document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
         }
