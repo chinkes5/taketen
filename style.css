@@ -23,6 +23,7 @@ h1 {
 
 #sidebarCell {
     font-family: 'Nanum Pen Script', cursive;
+    color: white;
     background-color: #385b94;
     grid-row-start: 2;
     grid-column-start: 1;
@@ -64,8 +65,15 @@ h1 {
     flex-wrap: nowrap;
 }
 #score{
-    float: right;
+    /* float: right; */
     font-size: 3em;
+}
+
+.scoreBox{
+    /* width: 100%; */
+    /* display: inline-block; */
+    /* display: flex; */
+    /* flex-direction: column; */
 }
 
 #gameArea {
