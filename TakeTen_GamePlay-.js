@@ -19,7 +19,7 @@ function rightProximity(row1, column1, row2, column2, boxsize) {
     }
     else {
         row = false;
-        console.log('too far X');
+        //console.log('too far X');
     }
     let thresholdY = boxsize.height * 1.7;
     // console.log('y distance: ' + column1 + ' - ' + column2 + ' = ' + (column1 - column2));
@@ -31,7 +31,7 @@ function rightProximity(row1, column1, row2, column2, boxsize) {
     }
     else {
         column = false;
-        console.log('too far Y');
+        //console.log('too far Y');
     }
     //logical conjunction for a set of Boolean operands will be true 
     //if and only if all the operands are true. Otherwise it will be false.
@@ -97,7 +97,7 @@ let boxsize = document.getElementById('0-0').getBoundingClientRect();
 //https://web.dev/drag-and-drop/
 document.addEventListener('DOMContentLoaded', (event) => {
     //build out the drag and drop functions when the page is loaded
-    function handleDragStart(e) {
+    function pointerdown(e) {
         //make slightly transparent and store the object being drug
         this.style.opacity = '0.4';
         dragSrcEl = this;
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 
-    function handleDrop(e) {
+    function pointerup(e) {
         e.stopPropagation(); // stops the browser from redirecting.
         if (dragSrcEl !== this) {
             //if you didn't drop back in same place, do this-
@@ -185,11 +185,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let items = document.querySelectorAll('.gamePiece');
     //load up each game piece with events
     items.forEach(function (item) {
-        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragstart', pointerdown);
         item.addEventListener('dragover', handleDragOver);
         item.addEventListener('dragenter', handleDragEnter);
         item.addEventListener('dragleave', handleDragLeave);
         item.addEventListener('dragend', handleDragEnd);
-        item.addEventListener('drop', handleDrop);
+        item.addEventListener('drop', pointerup);
     });
 });
