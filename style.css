@@ -49,6 +49,7 @@ h1 {
     grid-row-end: 4;
     grid-column-end: 3;
     color: white;
+    touch-action: none;
 }
 
 #logoCell {
@@ -69,7 +70,7 @@ h1 {
     font-size: 3em;
 }
 
-#gameArea {
+.gameArea {
     display: flex;
     flex-direction: row;
 }
@@ -80,7 +81,6 @@ h1 {
     border-radius: 2px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
-    touch-action: none;
     cursor: move;
     width: 3em;
     height: 2em;

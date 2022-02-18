@@ -93,103 +93,81 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-//drag and drop - https://www.w3schools.com/html/html5_draganddrop.asp or 
-//https://web.dev/drag-and-drop/
-document.addEventListener('DOMContentLoaded', (event) => {
-    //build out the drag and drop functions when the page is loaded
-    function pointerdown(e) {
-        //make slightly transparent and store the object being drug
-        this.style.opacity = '0.4';
-        dragSrcEl = this;
+const container = document.querySelector('.gameArea');
+container.addEventListener('pointerdown', userPressed, { passive: true });
+function userPressed(event) {
+    element = event.target;
+    if (element.classList.contains('gamePiece')) {
+        console.log("pick up!")
+        container.addEventListener('pointermove', userMoved, { passive: true });
+        container.addEventListener('pointerup', userReleased, { passive: true });
+        container.addEventListener('pointercancel', userReleased, { passive: true });
+    };
+};
+
+var element, bbox, startX, startY;
+
+function userPressed(event) {
+    element = event.target;
+    if (element.classList.contains('gamePiece')) {
+        startX = event.clientX;
+        startY = event.clientY;
         startPosition = this.getBoundingClientRect();
-
-        e.dataTransfer.effectAllowed = 'move';
-    }
-
-    function handleDragOver(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-            //default is to try and load the dropped item as a URL
-        }
-        // this.classList.add('under');
-        return false;
-    }
-
-    function handleDragEnter(e) {
-        //change color for feedback that something is happening
+        bbox = element.getBoundingClientRect();
+        container.addEventListener('pointermove', userMoved, { passive: true });
+        container.addEventListener('pointerup', userReleased, { passive: true });
+        container.addEventListener('pointercancel', userReleased, { passive: true });
         this.classList.add('over');
-    }
+    };
+};
 
-    function handleDragLeave(e) {
-        //restore color for feedback that something is happening
-        this.classList.remove('over');
-    }
+function userMoved(event) {
+    let deltaX = event.clientX - startX;
+    let deltaY = event.clientY - startY;
+    element.style.left = bbox.left + deltaX + "px";
+    element.style.top = bbox.top + deltaY + "px";
+};
 
-    function handleDragEnd(e) {
-        //restore to no transparency
-        this.style.opacity = '1';
-        items.forEach(function (item) {
-            //change color for feedback that something is happening
-            item.classList.remove('over');
-        });
-    }
+function userReleased(event) {
+    container.removeEventListener('pointermove', userMoved);
+    container.removeEventListener('pointerup', userReleased);
+    container.removeEventListener('pointercancel', userReleased);
+    endPosition = this.getBoundingClientRect();
 
-    function pointerup(e) {
-        e.stopPropagation(); // stops the browser from redirecting.
-        if (dragSrcEl !== this) {
-            //if you didn't drop back in same place, do this-
+    let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
+    if (showResults) {
+        switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
+            case 'ten':
+                // console.log('this is correct! Show response!')
+                dragSrcEl.classList.add('right');
+                this.classList.add('right');
 
-            //dragSrcEl.innerHTML = this.innerHTML;
-            endPosition = this.getBoundingClientRect();
+                score = document.getElementById("score").innerHTML;
+                // console.log('score is - ' + parseInt(score));
+                document.getElementById("score").innerHTML = parseInt(score) + 10;
+                sleep(500);
+                removeCells(dragSrcEl.id, this.id);
+                break;
+            case 'pair':
+                // console.log('this is correct! Show response!');
+                dragSrcEl.classList.add('right');
+                this.classList.add('right');
 
-            let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
-            if (showResults) {
-                switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
-                    case 'ten':
-                        // console.log('this is correct! Show response!')
-                        dragSrcEl.classList.add('right');
-                        this.classList.add('right');
+                score = document.getElementById("score").innerHTML;
+                // console.log('score is - ' + parseInt(score));
+                document.getElementById("score").innerHTML = parseInt(score) + 8;
 
-                        score = document.getElementById("score").innerHTML;
-                        // console.log('score is - ' + parseInt(score));
-                        document.getElementById("score").innerHTML = parseInt(score) + 10;
-                        sleep(500);
-                        removeCells(dragSrcEl.id, this.id);
-                        break;
-                    case 'pair':
-                        // console.log('this is correct! Show response!');
-                        dragSrcEl.classList.add('right');
-                        this.classList.add('right');
-
-                        score = document.getElementById("score").innerHTML;
-                        // console.log('score is - ' + parseInt(score));
-                        document.getElementById("score").innerHTML = parseInt(score) + 8;
-
-                        sleep(500);
-                        removeCells(dragSrcEl.id, this.id);
-                        break;
-                    default:
-                        // console.log('no match but should drop out of this switch')
-                        break;
-                }
-            } else {
-                console.log('got it wrong. Show response!');
-                dragSrcEl.classList.add('wrong');
-                this.classList.add('wrong');
-            }
-            //document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
+                sleep(500);
+                removeCells(dragSrcEl.id, this.id);
+                break;
+            default:
+                // console.log('no match but should drop out of this switch')
+                break;
         }
-        return false;
+    } else {
+        console.log('got it wrong. Show response!');
+        dragSrcEl.classList.add('wrong');
+        this.classList.add('wrong');
     }
-
-    let items = document.querySelectorAll('.gamePiece');
-    //load up each game piece with events
-    items.forEach(function (item) {
-        item.addEventListener('dragstart', pointerdown);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('dragenter', handleDragEnter);
-        item.addEventListener('dragleave', handleDragLeave);
-        item.addEventListener('dragend', handleDragEnd);
-        item.addEventListener('drop', pointerup);
-    });
-});
+    this.classList.remove('over');
+};
