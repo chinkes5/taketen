@@ -132,8 +132,9 @@ function userReleased(event) {
     container.removeEventListener('pointermove', userMoved);
     container.removeEventListener('pointerup', userReleased);
     container.removeEventListener('pointercancel', userReleased);
-    endPosition = this.getBoundingClientRect();
 
+    endPosition = this.getBoundingClientRect();
+    dragSrcEl = this;
     let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
     if (showResults) {
         switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
