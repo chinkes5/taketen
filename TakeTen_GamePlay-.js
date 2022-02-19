@@ -57,30 +57,30 @@ function removeCells(cell1ID, cell2ID) {
     // console.log('removed ' + cell1ID + ' and ' + cell2ID);
 }
 
-function evaluateDrop() {
-    switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
+function evaluateDrop(target, source) {
+    switch (valueMatch(source.innerHTML, target.innerHTML)) {
         case 'ten':
-            // console.log('this is correct! Show response!')
-            dragSrcEl.classList.add('right');
-            this.classList.add('right');
+            // console.log('target is correct! Show response!')
+            source.classList.add('right');
+            target.classList.add('right');
 
             score = document.getElementById("score").innerHTML;
             // console.log('score is - ' + parseInt(score));
             document.getElementById("score").innerHTML = parseInt(score) + 10;
             sleep(500);
-            removeCells(dragSrcEl.id, this.id);
+            removeCells(source.id, target.id);
             break;
         case 'pair':
-            // console.log('this is correct! Show response!');
-            dragSrcEl.classList.add('right');
-            this.classList.add('right');
+            // console.log('target is correct! Show response!');
+            source.classList.add('right');
+            target.classList.add('right');
 
             score = document.getElementById("score").innerHTML;
             // console.log('score is - ' + parseInt(score));
             document.getElementById("score").innerHTML = parseInt(score) + 8;
 
             sleep(500);
-            removeCells(dragSrcEl.id, this.id);
+            removeCells(source.id, target.id);
             break;
         default:
             // console.log('no match but should drop out of this switch')
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
             if (showResults) {
-                evaluateDrop();
+                evaluateDrop(dragSrcEl, this);
             } else {
                 console.log('got it wrong. Show response!');
                 dragSrcEl.classList.add('wrong');
