@@ -57,6 +57,37 @@ function removeCells(cell1ID, cell2ID) {
     // console.log('removed ' + cell1ID + ' and ' + cell2ID);
 }
 
+function evaluateDrop() {
+    switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
+        case 'ten':
+            // console.log('this is correct! Show response!')
+            dragSrcEl.classList.add('right');
+            this.classList.add('right');
+
+            score = document.getElementById("score").innerHTML;
+            // console.log('score is - ' + parseInt(score));
+            document.getElementById("score").innerHTML = parseInt(score) + 10;
+            sleep(500);
+            removeCells(dragSrcEl.id, this.id);
+            break;
+        case 'pair':
+            // console.log('this is correct! Show response!');
+            dragSrcEl.classList.add('right');
+            this.classList.add('right');
+
+            score = document.getElementById("score").innerHTML;
+            // console.log('score is - ' + parseInt(score));
+            document.getElementById("score").innerHTML = parseInt(score) + 8;
+
+            sleep(500);
+            removeCells(dragSrcEl.id, this.id);
+            break;
+        default:
+            // console.log('no match but should drop out of this switch')
+            break;
+    }
+}
+
 //helpful pages - 
 //https://www.javascripttutorial.net/javascript-multidimensional-array/
 //https://www.w3schools.com/js/default.asp
@@ -144,34 +175,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
             if (showResults) {
-                switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
-                    case 'ten':
-                        // console.log('this is correct! Show response!')
-                        dragSrcEl.classList.add('right');
-                        this.classList.add('right');
-
-                        score = document.getElementById("score").innerHTML;
-                        // console.log('score is - ' + parseInt(score));
-                        document.getElementById("score").innerHTML = parseInt(score) + 10;
-                        sleep(500);
-                        removeCells(dragSrcEl.id, this.id);
-                        break;
-                    case 'pair':
-                        // console.log('this is correct! Show response!');
-                        dragSrcEl.classList.add('right');
-                        this.classList.add('right');
-
-                        score = document.getElementById("score").innerHTML;
-                        // console.log('score is - ' + parseInt(score));
-                        document.getElementById("score").innerHTML = parseInt(score) + 8;
-
-                        sleep(500);
-                        removeCells(dragSrcEl.id, this.id);
-                        break;
-                    default:
-                        // console.log('no match but should drop out of this switch')
-                        break;
-                }
+                evaluateDrop();
             } else {
                 console.log('got it wrong. Show response!');
                 dragSrcEl.classList.add('wrong');
@@ -193,3 +197,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
         item.addEventListener('drop', pointerup);
     });
 });
+
