@@ -57,30 +57,30 @@ function removeCells(cell1ID, cell2ID) {
     // console.log('removed ' + cell1ID + ' and ' + cell2ID);
 }
 
-function evaluateDrop() {
-    switch (valueMatch(dragSrcEl.innerHTML, this.innerHTML)) {
+function evaluateDrop(source, target) {
+    switch (valueMatch(source.innerHTML, target.innerHTML)) {
         case 'ten':
             // console.log('this is correct! Show response!')
-            dragSrcEl.classList.add('right');
-            this.classList.add('right');
+            source.classList.add('right');
+            target.classList.add('right');
 
             score = document.getElementById("score").innerHTML;
             // console.log('score is - ' + parseInt(score));
             document.getElementById("score").innerHTML = parseInt(score) + 10;
             sleep(500);
-            removeCells(dragSrcEl.id, this.id);
+            removeCells(source.id, target.id);
             break;
         case 'pair':
             // console.log('this is correct! Show response!');
-            dragSrcEl.classList.add('right');
-            this.classList.add('right');
+            source.classList.add('right');
+            target.classList.add('right');
 
             score = document.getElementById("score").innerHTML;
             // console.log('score is - ' + parseInt(score));
             document.getElementById("score").innerHTML = parseInt(score) + 8;
 
             sleep(500);
-            removeCells(dragSrcEl.id, this.id);
+            removeCells(source.id, target.id);
             break;
         default:
             // console.log('no match but should drop out of this switch')
@@ -124,77 +124,56 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-//drag and drop - https://www.w3schools.com/html/html5_draganddrop.asp or 
-//https://web.dev/drag-and-drop/
-document.addEventListener('DOMContentLoaded', (event) => {
-    //build out the drag and drop functions when the page is loaded
-    function pointerdown(e) {
-        //make slightly transparent and store the object being drug
-        this.style.opacity = '0.4';
-        dragSrcEl = this;
-        startPosition = this.getBoundingClientRect();
-
-        e.dataTransfer.effectAllowed = 'move';
-    }
-
-    function handleDragOver(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-            //default is to try and load the dropped item as a URL
-        }
-        // this.classList.add('under');
+//https://github.com/bevacqua/dragula
+dragula([document.querySelector('.gamePiece')], {
+    // determine whether to copy elements rather than moving
+    copy: false,
+    // spilling will put the element back where it was dragged from, if this is true
+    revertOnSpill: true,
+    // spilling will `.remove` the element, if this is true
+    removeOnSpill: false,
+    // allows users to select the amount of movement on the X axis before it is considered a drag instead of a click   
+    slideFactorX: 0,
+    // allows users to select the amount of movement on the Y axis before it is considered a drag instead of a click      
+    slideFactorY: 0,
+    // only elements in drake.containers will be taken into account
+    isContainer: function (el) {
+        return false;
+    },
+    // elements are always draggable by default
+    moves: function (el, source, handle, sibling) {
+        return true;
+    },
+    // elements can be dropped in any of the `containers` by default
+    accepts: function (el, target, source, sibling) {
+        return true;
+    },
+    // don't prevent any drags from initiating by default
+    invalid: function (el, handle) {
         return false;
     }
+}).on('drag', function (el, source) {
+    dragSrcEl = el;
+    startPosition = el.getBoundingClientRect();
+}).on('dragend', function (el) {
+    // do something
+}).on('drop', function (el, target, source, sibling) {
+    if (target !== source) {
+        //if you didn't drop back in same place, do this-
+        endPosition = target.getBoundingClientRect();
 
-    function handleDragEnter(e) {
-        //change color for feedback that something is happening
-        this.classList.add('over');
-    }
-
-    function handleDragLeave(e) {
-        //restore color for feedback that something is happening
-        this.classList.remove('over');
-    }
-
-    function handleDragEnd(e) {
-        //restore to no transparency
-        this.style.opacity = '1';
-        items.forEach(function (item) {
-            //change color for feedback that something is happening
-            item.classList.remove('over');
-        });
-    }
-
-    function pointerup(e) {
-        e.stopPropagation(); // stops the browser from redirecting.
-        if (dragSrcEl !== this) {
-            //if you didn't drop back in same place, do this-
-
-            //dragSrcEl.innerHTML = this.innerHTML;
-            endPosition = this.getBoundingClientRect();
-
-            let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
-            if (showResults) {
-                evaluateDrop();
-            } else {
-                console.log('got it wrong. Show response!');
-                dragSrcEl.classList.add('wrong');
-                this.classList.add('wrong');
-            }
-            //document.getElementById("results").innerHTML = 'from: ' + dragSrcEl.id + ' to: ' + this.id + '<br>' + showResults;
+        let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
+        if (showResults) {
+            evaluateDrop(source, target);
+        } else {
+            console.log('got it wrong. Show response!');
+            source.classList.add('wrong');
+            el.classList.add('wrong');
         }
-        return false;
     }
-
-    let items = document.querySelectorAll('.gamePiece');
-    //load up each game piece with events
-    items.forEach(function (item) {
-        item.addEventListener('dragstart', pointerdown);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('dragenter', handleDragEnter);
-        item.addEventListener('dragleave', handleDragLeave);
-        item.addEventListener('dragend', handleDragEnd);
-        item.addEventListener('drop', pointerup);
-    });
+}).on('over', function (el, container, source) {
+    el.classList.add('over');
+}).on('out', function (el, container, source) {
+    el.classList.remove('over');
 });
 
