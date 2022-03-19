@@ -1,3 +1,7 @@
+//#################################
+//## copyright 2022 John Chinkes ##
+//#################################
+
 function sleep(milliseconds) {
     const date = Date.now();
     let currentDate = null;
