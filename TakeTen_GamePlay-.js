@@ -129,7 +129,7 @@ let boxsize = document.getElementById('0-0').getBoundingClientRect();
 //dragging and touching functionality
 //from: https://github.com/marcospont/agnostic-draggable 
 //and https://www.cssscript.com/draggable-droppable-sortable-agnostic/
-new Draggable(document.querySelector('.gamePiece'), 
+new agnosticDraggable.Draggable(document.querySelector('.gamePiece'), 
     {
         appendTo: 'gameArea',
         cursor: 'move',
@@ -144,7 +144,7 @@ new Draggable(document.querySelector('.gamePiece'),
     }
 );
 
-new Droppable(document.querySelector('.gamePiece'), 
+new agnosticDraggable.Droppable(document.querySelector('.gamePiece'), 
     {
         scope: 'gamePiece'
     },
