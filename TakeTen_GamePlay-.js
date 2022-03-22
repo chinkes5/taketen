@@ -47,39 +47,45 @@ function valueMatch(cell1, cell2) {
     return false;
 }
 
+function setScore(element, addPoints) {
+    score = document.getElementById(element).innerHTML;
+    document.getElementById(element).innerHTML = parseInt(score) + addPoints;
+}
+
 function removeCells(cell1ID, cell2ID) {
     document.getElementById(cell1ID).remove();
     document.getElementById(cell2ID).remove();
+}
+
+function showSuccess(source, target, addPoints){
+    //make flashy-flashy green lights here!
+    setScore("score", addPoints);
+    // console.log('score is - ' + parseInt(score));
+    sleep(500)
+    removeCells(source.id, target.id);
     // console.log('removed ' + cell1ID + ' and ' + cell2ID);
+
+}
+
+function showFailure(source, target){
+    //make flashy-flashy red lights here.
+    console.log('Did not match ' + source + ' and ' + target)
 }
 
 function evaluateDrop(source, target) {
     switch (valueMatch(source.innerHTML, target.innerHTML)) {
         case 'ten':
-            // console.log('this is correct! Show response!')
             source.classList.add('right');
             target.classList.add('right');
-
-            score = document.getElementById("score").innerHTML;
-            // console.log('score is - ' + parseInt(score));
-            document.getElementById("score").innerHTML = parseInt(score) + 10;
-            sleep(500);
-            removeCells(source.id, target.id);
+            showSuccess(source, target, 10)
             break;
         case 'pair':
-            // console.log('this is correct! Show response!');
             source.classList.add('right');
             target.classList.add('right');
-
-            score = document.getElementById("score").innerHTML;
-            // console.log('score is - ' + parseInt(score));
-            document.getElementById("score").innerHTML = parseInt(score) + 8;
-
-            sleep(500);
-            removeCells(source.id, target.id);
+            showSuccess(source, target, 8)
             break;
         default:
-            // console.log('no match but should drop out of this switch')
+            showFailure(source, target)
             break;
     }
 }
@@ -88,7 +94,7 @@ function evaluateDrop(source, target) {
 //https://www.javascripttutorial.net/javascript-multidimensional-array/
 //https://www.w3schools.com/js/default.asp
 
-//game table will be 5 columns by 20 rows, 
+//game table will be 6 columns by 20 rows, 
 //the display will be verticle where the columns get shorter as numbers are matched
 //make each column with 20 random numbers between 1 and 9
 let gameTable = [
@@ -100,8 +106,8 @@ let gameTable = [
     column5 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
 ]
 
-// loop the outer array to build the columns
 let text = ""
+// loop the outer array to build the columns
 for (let i = 0; i < gameTable.length; i++) {
     // get the size of the inner array
     var innerArrayLength = gameTable[i].length;
@@ -120,32 +126,39 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-const position = { x: 0, y: 0 }
-interact('.gamePiece').draggable({
-    listeners: {
-        start(event) {
-            console.log(event.type, event.target)
-        },
-        move(event) {
-            position.x += event.dx
-            position.y += event.dy
-            event.target.style.transform = 'translate(${position.x}pz, ${position.y}px)'
-            event.target.classList.add('over')
-        },
+//dragging and touching functionality
+//from: https://github.com/marcospont/agnostic-draggable 
+//and https://www.cssscript.com/draggable-droppable-sortable-agnostic/
+new Draggable(document.querySelector('.gamePiece'), 
+    {
+        appendTo: 'gameArea',
+        cursor: 'move',
+        opacity: 0.6,
+        revert: true,
+        scope: 'gamePiece'
+    },
+    {
+          'drag:move': function (event) {
+            // do something
+          },
     }
-})
-interact('.gamePiece').dropzone({
-    ondrop: function (event) {
-        let showResults = rightProximity(event.target.x, event.target.y, event.relatedTarget.x, event.relatedTarget.y, boxsize);
-        if (showResults) {
-            evaluateDrop(event.relatedTarget, event.target);
-        } else {
-            console.log('got it wrong. Show response!');
-            event.relatedTarget.classList.add('wrong');
-            event.target.classList.add('wrong');
-        }
-    }
-})
-    .on('dropactivate', function (event) {
-        event.target.classList.add('over')
-    })
+);
+
+new Droppable(document.querySelector('.gamePiece'), 
+    {
+        scope: 'gamePiece'
+    },
+    {
+    'droppable:init': function (event) {
+        // do something
+    },
+    'droppable:activate': function (event) {
+        // do something
+    },
+    'droppable:drop': function (event) {
+        evaluateDrop(draggable, Droppable)
+    },
+    'droppable:out': function (event) {
+        // do something
+    },
+});
