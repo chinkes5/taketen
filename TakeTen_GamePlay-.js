@@ -10,10 +10,6 @@ function sleep(milliseconds) {
 function rightProximity(row1, column1, row2, column2, boxsize) {
     //eval each row and column separately but both must be true to pass
     let thresholdX = boxsize.width * 1.7;
-    // console.log('x distance: ' + row1 + ' - ' + row2 + ' = ' + (row1 - row2));
-    // console.log('max range: ' + thresholdX);
-    // console.log(thresholdX > (row1 - row2));
-    // console.log(-thresholdX < (row1 - row2));
     if (thresholdX > (row1 - row2) && -thresholdX < (row1 - row2)) {
         row = true;
     }
@@ -22,10 +18,6 @@ function rightProximity(row1, column1, row2, column2, boxsize) {
         //console.log('too far X');
     }
     let thresholdY = boxsize.height * 1.7;
-    // console.log('y distance: ' + column1 + ' - ' + column2 + ' = ' + (column1 - column2));
-    // console.log('max range: ' + thresholdY);
-    // console.log(thresholdY < (column1 - column2));
-    // console.log(-thresholdY < (column1 - column2));
     if (thresholdY > (column1 - column2) && -thresholdY < (column1 - column2)) {
         column = true;
     }
@@ -94,14 +86,14 @@ function evaluateDrop(source, target) {
 
 //game table will be 5 columns by 20 rows, 
 //the display will be verticle where the columns get shorter as numbers are matched
-//make each column with 20 random numbers less than 10
+//make each column with 20 random numbers between 1 and 9
 let gameTable = [
-    column0 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column1 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column2 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column3 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column4 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column5 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
+    column0 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column1 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column2 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column3 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column4 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column5 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
 ]
 
 // loop the outer array to build the columns
@@ -124,56 +116,32 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-//https://github.com/bevacqua/dragula
-dragula([document.querySelector('.gamePiece')], {
-    // determine whether to copy elements rather than moving
-    copy: false,
-    // spilling will put the element back where it was dragged from, if this is true
-    revertOnSpill: true,
-    // spilling will `.remove` the element, if this is true
-    removeOnSpill: false,
-    // allows users to select the amount of movement on the X axis before it is considered a drag instead of a click   
-    slideFactorX: 0,
-    // allows users to select the amount of movement on the Y axis before it is considered a drag instead of a click      
-    slideFactorY: 0,
-    // only elements in drake.containers will be taken into account
-    isContainer: function (el) {
-        return false;
-    },
-    // elements are always draggable by default
-    moves: function (el, source, handle, sibling) {
-        return true;
-    },
-    // elements can be dropped in any of the `containers` by default
-    accepts: function (el, target, source, sibling) {
-        return true;
-    },
-    // don't prevent any drags from initiating by default
-    invalid: function (el, handle) {
-        return false;
+const position = { x: 0, y: 0 }
+interact('.gamePiece').draggable({
+    listeners: {
+        start(event) {
+            console.log(event.type, event.target)
+        },
+        move(event) {
+            position.x += event.dx
+            position.y += event.dy
+            event.target.style.transform = 'translate(${position.x}pz, ${position.y}px)'
+            event.target.classList.add('over')
+        },
     }
-}).on('drag', function (el, source) {
-    dragSrcEl = el;
-    startPosition = el.getBoundingClientRect();
-}).on('dragend', function (el) {
-    // do something
-}).on('drop', function (el, target, source, sibling) {
-    if (target !== source) {
-        //if you didn't drop back in same place, do this-
-        endPosition = target.getBoundingClientRect();
-
-        let showResults = rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize);
+})
+interact('.gamePiece').dropzone({
+    ondrop: function (event) {
+        let showResults = rightProximity(event.target.x, event.target.y, event.relatedTarget.x, event.relatedTarget.y, boxsize);
         if (showResults) {
-            evaluateDrop(source, target);
+            evaluateDrop(event.relatedTarget, event.target);
         } else {
             console.log('got it wrong. Show response!');
-            source.classList.add('wrong');
-            el.classList.add('wrong');
+            event.relatedTarget.classList.add('wrong');
+            event.target.classList.add('wrong');
         }
     }
-}).on('over', function (el, container, source) {
-    el.classList.add('over');
-}).on('out', function (el, container, source) {
-    el.classList.remove('over');
-});
-
+})
+    .on('dropactivate', function (event) {
+        event.target.classList.add('over')
+    })
