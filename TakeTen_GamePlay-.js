@@ -115,7 +115,7 @@ for (let i = 0; i < gameTable.length; i++) {
     // loop the inner array to build the rows
     for (let j = 0; j < innerArrayLength; j++) {
         //make the game table into HTML to be displayed
-        text += '<div class=gamePiece id=' + i + '-' + j + ' draggable="true">' + gameTable[i][j] + '</div>';
+        text += '<div class=gamePiece id=' + i + '-' + j + ' >' + gameTable[i][j] + '</div>';
     }
     text += '</div>';
 }
@@ -129,36 +129,26 @@ let boxsize = document.getElementById('0-0').getBoundingClientRect();
 //dragging and touching functionality
 //from: https://github.com/marcospont/agnostic-draggable 
 //and https://www.cssscript.com/draggable-droppable-sortable-agnostic/
-new agnosticDraggable.Draggable(document.querySelector('.gamePiece'), 
-    {
-        appendTo: 'gameArea',
-        cursor: 'move',
-        opacity: 0.6,
-        revert: true,
-        scope: 'gamePiece'
-    },
-    {
-          'drag:move': function (event) {
-            // do something
-          },
-    }
-);
+document.querySelectorAll('.gamePiece').forEach(function (element) {
+    new agnosticDraggable.Draggable(element, 
+        {
+            appendTo: 'gameArea',
+            cursor: 'move',
+            opacity: 0.6,
+            revert: true,
+            scope: 'gamePiece'
+        },
+    );
+});
 
-new agnosticDraggable.Droppable(document.querySelector('.gamePiece'), 
-    {
-        scope: 'gamePiece'
-    },
-    {
-    'droppable:init': function (event) {
-        // do something
-    },
-    'droppable:activate': function (event) {
-        // do something
-    },
-    'droppable:drop': function (event) {
-        evaluateDrop(draggable, Droppable)
-    },
-    'droppable:out': function (event) {
-        // do something
-    },
+document.querySelectorAll('.gamePiece').forEach(function (element) {
+    new agnosticDraggable.Droppable(element, 
+        {
+            scope: 'gamePiece'
+        },
+        {
+        'droppable:drop': function (event) {
+            evaluateDrop(draggable, Droppable)
+        }
+    });
 });
