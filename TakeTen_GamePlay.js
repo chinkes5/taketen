@@ -162,13 +162,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function handleDragEnter(e) {
         //change color for feedback that something is happening
-        item.classList.remove('wrong');
+        this.classList.remove('wrong');
         this.classList.add('over');
     }
 
     function handleDragLeave(e) {
         //restore color for feedback that something is happening
-        item.classList.remove('wrong');
+        this.classList.remove('wrong');
         this.classList.remove('over');
     }
 
