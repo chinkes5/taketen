@@ -77,7 +77,10 @@ function showSuccess(source, target, addPoints){
 function showFailure(source, target){
     //make flashy-flashy red lights here.
     console.log('Did not match ' + source + ' and ' + target)
+    source.classList.add('wrong');
+    target.classList.add('wrong')
 }
+
 function evaluateDrop(source, target) {
     switch (valueMatch(source.innerHTML, target.innerHTML)) {
         case 'ten':
@@ -159,11 +162,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function handleDragEnter(e) {
         //change color for feedback that something is happening
+        item.classList.remove('wrong');
         this.classList.add('over');
     }
 
     function handleDragLeave(e) {
         //restore color for feedback that something is happening
+        item.classList.remove('wrong');
         this.classList.remove('over');
     }
 
@@ -188,7 +193,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             if (showResults) {
                 evaluateDrop(dragSrcEl, this);
             } else {
-                console.log('got it wrong. Show response!');
+                console.log('Too far apart. Show response!');
                 dragSrcEl.classList.add('wrong');
                 this.classList.add('wrong');
             }
