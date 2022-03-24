@@ -55,38 +55,45 @@ function valueMatch(cell1, cell2) {
     return false;
 }
 
+function setScore(element, addPoints) {
+    score = document.getElementById(element).innerHTML;
+    document.getElementById(element).innerHTML = parseInt(score) + addPoints;
+}
+
 function removeCells(cell1ID, cell2ID) {
     document.getElementById(cell1ID).remove();
     document.getElementById(cell2ID).remove();
+}
+
+function showSuccess(source, target, addPoints){
+    //make flashy-flashy green lights here!
+    setScore("score", addPoints);
+    // console.log('score is - ' + parseInt(score));
+    sleep(500)
+    removeCells(source.id, target.id);
     // console.log('removed ' + cell1ID + ' and ' + cell2ID);
 }
 
-function evaluateDrop(target, source) {
+function showFailure(source, target){
+    //make flashy-flashy red lights here.
+    console.log('Did not match ' + source + ' and ' + target)
+}
+function evaluateDrop(source, target) {
     switch (valueMatch(source.innerHTML, target.innerHTML)) {
         case 'ten':
             // console.log('target is correct! Show response!')
             source.classList.add('right');
             target.classList.add('right');
-
-            score = document.getElementById("score").innerHTML;
-            // console.log('score is - ' + parseInt(score));
-            document.getElementById("score").innerHTML = parseInt(score) + 10;
-            sleep(500);
-            removeCells(source.id, target.id);
+            showSuccess(source, target, 10)
             break;
         case 'pair':
             // console.log('target is correct! Show response!');
             source.classList.add('right');
             target.classList.add('right');
-
-            score = document.getElementById("score").innerHTML;
-            // console.log('score is - ' + parseInt(score));
-            document.getElementById("score").innerHTML = parseInt(score) + 8;
-
-            sleep(500);
-            removeCells(source.id, target.id);
+            showSuccess(source, target, 8)
             break;
         default:
+            showFailure(source, target)
             // console.log('no match but should drop out of this switch')
             break;
     }
@@ -96,16 +103,16 @@ function evaluateDrop(target, source) {
 //https://www.javascripttutorial.net/javascript-multidimensional-array/
 //https://www.w3schools.com/js/default.asp
 
-//game table will be 5 columns by 20 rows, 
+//game table will be 6 columns by 20 rows, 
 //the display will be verticle where the columns get shorter as numbers are matched
-//make each column with 20 random numbers less than 10
+//make each column with 20 random numbers between 1 and 9
 let gameTable = [
-    column0 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column1 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column2 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column3 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column4 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
-    column5 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 10)),
+    column0 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column1 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column2 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column3 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column4 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
+    column5 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
 ]
 
 // loop the outer array to build the columns
