@@ -87,7 +87,7 @@ body{
 }
 #score{
     float: left;
-    width: 200px;
+    width: 1em;
 }
 #player {
     float: right;

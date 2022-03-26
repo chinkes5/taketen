@@ -95,30 +95,32 @@ function evaluateDrop(source, target) {
 };
 
 function dragging(event){
-    let element = event.target;
-    element.classList.add('over');
-    element.classList.remove('under');
-    element.classList.remove('wrong');
+    event.target.classList.add('over');
+    event.target.classList.remove('under');
+    event.target.classList.remove('wrong');
+    dragSource = event.target
     return false
 };
 
 function dragOver(event){
     event.preventDefault();
-    let element = event.target;
-    element.classList.add('under')
-    element.classList.remove('wrong');
+    event.target.classList.add('under')
+    event.target.classList.remove('wrong');
 };
 
 function dragOut(event){
     event.preventDefault();
-    let element = event.target;
-    element.classList.remove('under');
+    event.target.classList.remove('under');
 };
 
 function dropping(event){
     event.preventDefault();
-    let element = event.target;
-    evaluateDrop(element, document.elementFromPoint(element.clientX, element.clientY))
+    if(dragSource !== event.target){
+        //can't drop on yourself!
+        evaluateDrop(dragSource,event.target);
+    }
+    event.target.classList.remove('under');
+    dragSource.classList.remove('under');
 }
 
 //helpful pages - 
