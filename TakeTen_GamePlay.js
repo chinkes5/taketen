@@ -7,13 +7,10 @@ function sleep(milliseconds) {
     } while (currentDate - date < milliseconds);
 };
 
+//functions to make the game logic
 function rightProximity(row1, column1, row2, column2, boxsize) {
     //eval each row and column separately but both must be true to pass
     let thresholdX = boxsize.width * 1.7;
-    // console.log('x distance: ' + row1 + ' - ' + row2 + ' = ' + (row1 - row2));
-    // console.log('max range: ' + thresholdX);
-    // console.log(thresholdX > (row1 - row2));
-    // console.log(-thresholdX < (row1 - row2));
     if (thresholdX > (row1 - row2) && -thresholdX < (row1 - row2)) {
         row = true;
     }
@@ -22,10 +19,6 @@ function rightProximity(row1, column1, row2, column2, boxsize) {
         //console.log('too far X');
     }
     let thresholdY = boxsize.height * 1.7;
-    // console.log('y distance: ' + column1 + ' - ' + column2 + ' = ' + (column1 - column2));
-    // console.log('max range: ' + thresholdY);
-    // console.log(thresholdY < (column1 - column2));
-    // console.log(-thresholdY < (column1 - column2));
     if (thresholdY > (column1 - column2) && -thresholdY < (column1 - column2)) {
         column = true;
     }
@@ -47,7 +40,6 @@ function valueMatch(cell1, cell2) {
         // console.log('value matched as pair');
         return 'pair';
     }
-    // console.log('got: ' + cell1 + ' and ' + cell2 + ' so no match...');
     return false;
 };
 
@@ -63,15 +55,15 @@ function removeCells(cell1ID, cell2ID) {
 
 function showSuccess(source, target, addPoints){
     //make flashy-flashy green lights here!
+    console.log(source.innerHTML + ' and ' + target.innerHTML +' matched :-)' )
     setScore("score", addPoints);
     sleep(500);
     removeCells(source.id, target.id);
-    // console.log('removed ' + cell1ID + ' and ' + cell2ID);
 };
 
 function showFailure(source, target){
     //make flashy-flashy red lights here.
-    console.log('Did not match ' + source + ' and ' + target)
+    console.log(source.innerHTML + ' and ' + target.innerHTML +' did not match :-(' )
     source.classList.add('wrong');
     target.classList.add('wrong')
 };
@@ -94,6 +86,7 @@ function evaluateDrop(source, target) {
     };
 };
 
+//functions to get the game play events to execute the logic
 function dragging(event){
     event.target.classList.add('over');
     event.target.classList.remove('under');
@@ -111,6 +104,7 @@ function dragOver(event){
 function dragOut(event){
     event.preventDefault();
     event.target.classList.remove('under');
+    event.target.classList.remove('wrong');
 };
 
 function dropping(event){
@@ -123,12 +117,7 @@ function dropping(event){
     dragSource.classList.remove('under');
 }
 
-//helpful pages - 
-//https://www.javascripttutorial.net/javascript-multidimensional-array/
-//https://www.w3schools.com/js/default.asp
-
 //game table will be 6 columns by 20 rows, 
-//the display will be verticle where the columns get shorter as numbers are matched
 //make each column with 20 random numbers between 1 and 9
 let gameTable = [
     column0 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
@@ -149,11 +138,6 @@ for (let i = 0; i < gameTable.length; i++) {
     for (let j = 0; j < innerArrayLength; j++) {
         //make the game table into HTML to be displayed
         text += '<div class=gamePiece id=' + i + '-' + j + ' \
-        draggable="true" \
-        ondragover="dragOver(event)" \
-        ondragstart="dragging(event)" \
-        ondragexit="dragOut(event)" \
-        ondrop="dropping(event)"\
         >' + gameTable[i][j] + '</div>';
     }
     text += '</div>';
@@ -165,8 +149,11 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-// [...document.getElementsByClassName("gamePiece")].forEach(element => {
-//     this.addEventListener('drop', dropping(element));
-//     this.addEventListener('drag', dragging(element));
-//     this.addEventListener('dragover', dragOver(element));
-// });
+    //loop thru the game pieces and add the drag 'n drop events
+[...document.getElementsByClassName("gamePiece")].forEach(element => {
+    element.draggable = true;
+    element.addEventListener('dragover', dragOver);
+    element.addEventListener('drag', dragging);
+    element.addEventListener('dragleave', dragOut);
+    element.addEventListener('drop', dropping);
+});
