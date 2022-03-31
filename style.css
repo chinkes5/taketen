@@ -77,7 +77,6 @@ body{
     flex-direction: column-reverse;
     flex-wrap: nowrap;
 }
-
 #scoreBox {
     width: 100%;
     font-size: 3em;
@@ -85,12 +84,10 @@ body{
     padding: 2px;
     margin: 0px;
 }
-
-#score {
+#score{
     float: left;
-    width: 200px;
+    width: 1em;
 }
-
 #player {
     float: right;
     width: 200px;
@@ -109,7 +106,7 @@ body{
     border-radius: 5px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
-    /* cursor: move; */
+    cursor: move;
     width: 3em;
     height: 2em;
     margin: 3px;
@@ -129,20 +126,24 @@ body{
 }
 
 .gamePiece.wrong {
-    background-color: red;
-    animation: blinking-background 20ms infinite;
+    /* background-color: red; */
+    animation: blinkingBackground 500ms infinite;
 }
 
-@keyframes blinkingBackground {
+@keyframes blinkingBackground{
     0% {
-        background-color: rgb(255, 186, 186)
+        background-color: rgb(255, 186, 186);
     }
-
-    50% {
+    25% {
         background-color: rgb(255, 92, 92);
     }
-
-    100% {
+    50% {
         background-color: red;
+    }
+    75% {
+        background-color: rgb(255, 92, 92);
+    }
+    100% {
+        background-color: rgb(255, 186, 186);
     }
 }
