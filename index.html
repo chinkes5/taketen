@@ -14,15 +14,17 @@
 </head>
 
 <body>
+    <div id="sidebarCell">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <h2>Instructions:</h2>
+        <p>Drag cells together that are adjacent if they match or equal ten</p>
+        <p>The goal is to eliminate as many cells as possible</p>
+        <p id=results></p>
+    </div>
     <div class="angry-grid">
         <div id="titleCell">
             <h1>Take Ten Game</h1>
-        </div>
-        <div id="sidebarCell">
-            <h2>Instructions:</h2>
-            <p>Drag cells together that are adjacent if they match or equal ten</p>
-            <p>The goal is to eliminate as many cells as possible</p>
-            <p id=results></p>
+            <button class="openbtn" onclick="openNav()">&#8594; Instructions</button>
         </div>
         <div id="bodyCell">
             <div id="scoreBox">
@@ -35,11 +37,9 @@
         </div>
         <div id="footerCell">&copy; 2022 John Edward Max Chinkes
         </div>
-        <div id="logoCell">
-            logo image
-        </div>
     </div>
-    <script src="TakeTen_GamePlay.js" ></script>
+    <script src="TakeTen_GamePlay.js"></script>
+    <script src="ui.js"></script>
 </body>
 
 </html>
