@@ -60,7 +60,6 @@ body{
     grid-row-end: 4;
     grid-column-end: 3;
     color: white;
-    touch-action: none;
     padding: 5px;
 }
 

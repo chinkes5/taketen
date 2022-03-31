@@ -1,30 +1,15 @@
-function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-        currentDate = Date.now();
-        // console.log('waiting');
-    } while (currentDate - date < milliseconds);
-};
-
 //functions to make the game logic
 function rightProximity(row1, column1, row2, column2, boxsize) {
+    let row = false;
+    let column = false;
     //eval each row and column separately but both must be true to pass
     let thresholdX = boxsize.width * 1.7;
     if (thresholdX > (row1 - row2) && -thresholdX < (row1 - row2)) {
         row = true;
     }
-    else {
-        row = false;
-        //console.log('too far X');
-    }
     let thresholdY = boxsize.height * 1.7;
     if (thresholdY > (column1 - column2) && -thresholdY < (column1 - column2)) {
         column = true;
-    }
-    else {
-        column = false;
-        //console.log('too far Y');
     }
     //logical conjunction for a set of Boolean operands will be true 
     //if and only if all the operands are true. Otherwise it will be false.
@@ -57,32 +42,45 @@ function showSuccess(source, target, addPoints){
     //make flashy-flashy green lights here!
     console.log(source.innerHTML + ' and ' + target.innerHTML +' matched :-)' )
     setScore("score", addPoints);
-    sleep(500);
     removeCells(source.id, target.id);
 };
 
-function showFailure(source, target){
+function showFailure(source, target, reasonCode){
     //make flashy-flashy red lights here.
-    console.log(source.innerHTML + ' and ' + target.innerHTML +' did not match :-(' )
+    switch(reasonCode){
+        case 0:
+            console.log(source.innerHTML + ' and ' + target.innerHTML +' did not match :-(' );
+            break;
+        case 1:
+            console.log('cells were too far apart :-(');
+            break;
+    };    
     source.classList.add('wrong');
-    target.classList.add('wrong')
+    target.classList.add('wrong');
 };
 
 function evaluateDrop(source, target) {
-    switch (valueMatch(source.innerHTML, target.innerHTML)) {
-        case 'ten':
-            source.classList.add('right');
-            target.classList.add('right');
-            showSuccess(source, target, 10)
-            break;
-        case 'pair':
-            source.classList.add('right');
-            target.classList.add('right');
-            showSuccess(source, target, 8)
-            break;
-        default:
-            showFailure(source, target)
-            break;
+    startPosition = source.getBoundingClientRect();
+    endPosition = target.getBoundingClientRect();
+    if(rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize)){
+        switch (valueMatch(source.innerHTML, target.innerHTML)) {
+            case 'ten':
+                source.classList.add('right');
+                target.classList.add('right');
+                showSuccess(source, target, 10)
+                break;
+            case 'pair':
+                source.classList.add('right');
+                target.classList.add('right');
+                showSuccess(source, target, 8)
+                break;
+            default:
+                showFailure(source, target, 0)
+                break;
+        };
+    }
+    else {
+        showFailure(source, target, 1)
     };
 };
 
@@ -92,7 +90,7 @@ function dragging(event){
     event.target.classList.remove('under');
     event.target.classList.remove('wrong');
     dragSource = event.target
-    return false
+    return false;
 };
 
 function dragOver(event){
