@@ -158,4 +158,8 @@ let boxsize = document.getElementById('0-0').getBoundingClientRect();
     element.addEventListener('drag', dragging);
     element.addEventListener('dragleave', dragOut);
     element.addEventListener('drop', dropping);
+    element.addEventListener('ontouchstart', dragging);
+    element.addEventListener('ontouchmove', dragging);
+    element.addEventListener('ontouchend', dropping);
+    element.addEventListener('ontouchcancel', dropping);
 });
