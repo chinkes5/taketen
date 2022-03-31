@@ -1,3 +1,7 @@
+//#################################
+//## copyright 2022 John Chinkes ##
+//#################################
+
 //functions to make the game logic
 function rightProximity(row1, column1, row2, column2, boxsize) {
     let row = false;
