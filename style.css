@@ -21,21 +21,17 @@ body {
     color: white;
     background-color: #385b94;
     font-size: 1.5em;
-    margin: 10px;
+    /* margin: 10px; */
     height: 350px;
-    /* Specify a height */
     position: fixed;
-    /* Stay in place */
     z-index: 1;
-    /* Stay on top */
     width: 0;
     /* 0 width - change this with JavaScript */
     top: 0;
     left: 0;
-    overflow-x: hidden;
+    overflow: hidden;
     /* Disable horizontal scroll */
-    padding-top: 60px;
-    /* Place content 60px from the top */
+    padding: 0;
     transition: 0.5s;
     /* 0.5 second transition effect to slide in the sidepanel */
 }
@@ -48,6 +44,14 @@ body {
     margin-left: 50px;
     color: white;
     text-decoration: none;
+}
+
+#sidebarCell h2 {
+    padding: 10px;
+}
+
+#sidebarCell p {
+    padding: 10px;
 }
 
 /* Style the button that is used to open the sidepanel */
@@ -64,37 +68,22 @@ body {
 }
 
 .angry-grid {
-    display: grid;
-    grid-template-rows: 4rem auto 45px;
-    grid-template-columns: 16rem auto;
-    gap: 3px;
-    height: 100%;
+    width: 500px;
 }
 
 #titleCell {
     background-color: #a3a3a3;
-    grid-row-start: 1;
-    grid-column-start: 1;
-    grid-row-end: 2;
-    grid-column-end: 3;
     font-family: 'Annie Use Your Telescope', cursive;
+    height: 4em;
 }
 
 #bodyCell {
     background-color: #d0d9e6;
-    grid-row-start: 2;
-    grid-column-start: 1;
-    grid-row-end: 3;
-    grid-column-end: 3;
     padding: 20px;
 }
 
 #footerCell {
     background-color: #151127;
-    grid-row-start: 3;
-    grid-column-start: 1;
-    grid-row-end: 4;
-    grid-column-end: 3;
     color: white;
     padding: 5px;
 }
@@ -108,14 +97,13 @@ body {
 #scoreBox {
     width: 100%;
     font-size: 3em;
-    height: .5em;
+    height: 1em;
     padding: 2px;
-    margin: 0px;
+    margin: 10px;
 }
 
 #score {
     float: left;
-    width: 1em;
 }
 
 #player {
