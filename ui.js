@@ -7,3 +7,6 @@ function openNav() {
 function closeNav() {
     document.getElementById("sidebarCell").style.width = "0";
 } 
+
+document.getElementsByClassName("closebtn").addEventListener('click', closeNav)
+document.getElementsByClassName("openbtn").addEventListener('click', openNav)
