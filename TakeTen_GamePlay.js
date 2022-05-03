@@ -35,6 +35,10 @@ function valueMatch(cell1, cell2) {
 function setScore(element, addPoints) {
     score = document.getElementById(element).innerHTML;
     document.getElementById(element).innerHTML = parseInt(score) + addPoints;
+
+    //save this data to cache every time
+    let player = document.getElementById("player").innerHTML.split("<")[0];
+    saveScoreCloudFlare(parseInt(score) + addPoints, player, startTime);
 };
 
 function removeCells(cell1ID, cell2ID) {
@@ -151,7 +155,10 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-    //loop thru the game pieces and add the drag 'n drop events
+//get the time when page loaded to make a consistent timestamp for saving the score
+let startTime = Date.now();
+
+//loop thru the game pieces and add the drag 'n drop events
 [...document.getElementsByClassName("gamePiece")].forEach(element => {
     element.draggable = true;
     element.addEventListener('dragover', dragOver);

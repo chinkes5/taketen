@@ -3,7 +3,7 @@ function makePlayerName(){
     document.getElementById("player").innerHTML = playerName + "<span class=\"material-symbols-outlined\" onclick=\"updatePlayer()\">edit</span>"
 }
 
-//run this to set a random name on load-
+//run this to set a random name on load, must load two data files before running this!
 makePlayerName()
 
 function updatePlayer(){
@@ -20,7 +20,7 @@ function savePlayer(){
     document.getElementById("player").innerHTML = playerName + "<span class=\"material-symbols-outlined\" onclick=\"updatePlayer()\">edit</span>"
 }
 
-function saveScore(){
+function saveScoreCloudFlare(score, playerName, startTime){
     //hit the cloudflare worker with score and player name (but subtract the edit button)
-    let player = document.getElementById("player").innerHTML.split("<")[0];
+    
 };
