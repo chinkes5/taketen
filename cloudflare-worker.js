@@ -1,25 +1,32 @@
-addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event.request));
-});
-
-const setScore = data => TAKE-TEN-SCORES.put("data", data);
-const getScore = () => take-ten-scores.get("data");
+function setScore(key, data) {
+    return Score.put(key, data);
+}
+const getScore = () => Score.get(key);
 
 async function updateScore(request) {
     const body = await request.text();
-    const cacheKey = `data`;
+    const cacheKey = request.headers.get('key');
     try {
         JSON.parse(body);
-        await setCache(body);
+        await setScore(cacheKey, body);
         return new Response(body, { status: 200 });
     } catch (err) {
         return new Response(err, { status: 500 });
     };
 };
 
+const defaultData = { name: "jemc", score: 545 }
 async function getScores(request) {
-    const response = new Response("a list of scores and names!");
-    return response;
+    const cacheKey = request.headers.get('key');
+    let data;
+    const cache = await getScore(cacheKey);
+    if (!cache) {
+        await setScore(cacheKey, JSON.stringify(defaultData));
+        data = defaultData;
+    } else {
+        data = JSON.parse(cache);
+    }
+    return data;
 }
 
 async function handleRequest(request) {
@@ -31,3 +38,6 @@ async function handleRequest(request) {
     };
 };
 
+addEventListener('fetch', event => {
+    event.respondWith(handleRequest(event.request));
+});

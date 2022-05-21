@@ -4,8 +4,9 @@
 
 //logic to save game score in Cloudflare edge network
 function saveScoreCloudFlare(score, playerName, startTime){
-    //hit the cloudflare worker with score and player name (but subtract the edit button)
-    window.scores = [].concat(scores,{id:startTime,name:playerName,score:score})
+    //hit the cloudflare worker and save the new score with each update
+    //the stateTime is the key, player and score in json are the value
+    
 };
 
 //functions to make the game logic
@@ -162,7 +163,7 @@ document.getElementById("score").innerHTML = 0;
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
 //get the time when page loaded to make a consistent timestamp for saving the score
-let startTime = Date.now();
+let startTime = new Date();
 
 //loop thru the game pieces and add the drag 'n drop events
 [...document.getElementsByClassName("gamePiece")].forEach(element => {
