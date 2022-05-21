@@ -2,6 +2,12 @@
 //## copyright 2022 John Chinkes ##
 //#################################
 
+//logic to save game score in Cloudflare edge network
+function saveScoreCloudFlare(score, playerName, startTime){
+    //hit the cloudflare worker with score and player name (but subtract the edit button)
+    window.scores = [].concat(scores,{id:startTime,name:playerName,score:score})
+};
+
 //functions to make the game logic
 function rightProximity(row1, column1, row2, column2, boxsize) {
     let row = false;
