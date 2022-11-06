@@ -19,7 +19,7 @@ function savePlayer(){
 
 function getTopTen(){
     //load top ten highest scores from Cloudflare edge cache and display
-    document.getElementById("results").innerHTML = "Top Scores:<ol><li>JEMC - 560</li><li>JEMC - 542</li><li>JEMC - 538</li></ol>"
+    document.getElementById("results").innerHTML = "Top Scores:<ol><li>JEMC - 560</li><li>JEMC - 550</li><li>JEMC - 548</li><li>JEMC - 542</li><li>JEMC - 538</li></ol>"
 }
 
 //run this to set a random name on load, must load two data files before running this!
