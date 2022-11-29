@@ -57,8 +57,9 @@ function removeCells(cell1ID, cell2ID) {
     document.getElementById(cell2ID).remove();
 }
 
-function showSuccess(source, target, addPoints){
+function showSuccess(source, target, addPoints) {
     //make flashy-flashy green lights here!
+    console.log(source.innerHTML + ' and ' + target.innerHTML + ' matched :-)')
     setScore("score", addPoints);
     // console.log('score is - ' + parseInt(score));
     sleep(500)
@@ -67,26 +68,71 @@ function showSuccess(source, target, addPoints){
 
 }
 
-function showFailure(source, target){
+function showFailure(source, target, reasonCode){
     //make flashy-flashy red lights here.
-    console.log('Did not match ' + source + ' and ' + target)
-}
+    switch(reasonCode){
+        case 0:
+            console.log(source.innerHTML + ' and ' + target.innerHTML +' did not match :-(' );
+            break;
+        case 1:
+            console.log('cells were too far apart :-(');
+            break;
+    };    
+    source.classList.add('wrong');
+    target.classList.add('wrong');
+};
 
 function evaluateDrop(source, target) {
-    switch (valueMatch(source.innerHTML, target.innerHTML)) {
-        case 'ten':
-            source.classList.add('right');
-            target.classList.add('right');
-            showSuccess(source, target, 10)
-            break;
-        case 'pair':
-            source.classList.add('right');
-            target.classList.add('right');
-            showSuccess(source, target, 8)
-            break;
-        default:
-            showFailure(source, target)
-            break;
+    startPosition = source.getBoundingClientRect();
+    endPosition = target.getBoundingClientRect();
+    if(rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize)){
+        switch (valueMatch(source.innerHTML, target.innerHTML)) {
+            case 'ten':
+                source.classList.add('right');
+                target.classList.add('right');
+                showSuccess(source, target, 10)
+                break;
+            case 'pair':
+                source.classList.add('right');
+                target.classList.add('right');
+                showSuccess(source, target, 8)
+                break;
+            default:
+                showFailure(source, target, 0)
+                break;
+        };
+    }
+    else {
+        showFailure(source, target, 1)
+    };
+};
+
+//functions to get the game play events to execute the logic
+function dragging(event){
+    event.target.classList.add('over');
+    event.target.classList.remove('under');
+    event.target.classList.remove('wrong');
+    dragSource = event.target
+    return false;
+};
+
+function dragOver(event){
+    event.preventDefault();
+    event.target.classList.add('under')
+    event.target.classList.remove('wrong');
+};
+
+function dragOut(event){
+    event.preventDefault();
+    event.target.classList.remove('under');
+    event.target.classList.remove('wrong');
+};
+
+function dropping(event){
+    event.preventDefault();
+    if(dragSource !== event.target){
+        //can't drop on yourself!
+        evaluateDrop(dragSource,event.target);
     }
 }
 
@@ -126,29 +172,37 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-//dragging and touching functionality
-//from: https://github.com/marcospont/agnostic-draggable 
-//and https://www.cssscript.com/draggable-droppable-sortable-agnostic/
-document.querySelectorAll('.gamePiece').forEach(function (element) {
-    new agnosticDraggable.Draggable(element, 
-        {
-            appendTo: 'gameArea',
-            cursor: 'move',
-            opacity: 0.6,
-            revert: true,
-            scope: 'gamePiece'
-        },
-    );
+    //loop thru the game pieces and add the drag 'n drop events
+[...document.getElementsByClassName("gamePiece")].forEach(element => {
+    element.draggable = true;
+    element.addEventListener('dragover', dragOver);
+    element.addEventListener('drag', dragging);
+    element.addEventListener('dragleave', dragOut);
+    element.addEventListener('drop', dropping);
 });
-
-document.querySelectorAll('.gamePiece').forEach(function (element) {
-    new agnosticDraggable.Droppable(element, 
-        {
-            scope: 'gamePiece'
-        },
-        {
-        'droppable:drop': function (event) {
-            evaluateDrop(draggable, Droppable)
+*/
+const position = { x: 0, y: 0 }
+interact('.gamePiece')
+    .draggable({
+        listeners: {
+            start(event) {
+                console.log(event.type, event.target)
+            },
+            move (event) {
+                position.x += event.dx
+                position.y += event.dy
+          
+                event.target.style.transform =
+                  `translate(${position.x}px, ${position.y}px)`
+              },
+            onend: dropping,
         }
-    });
-});
+    })
+    .dropzone({
+        ondrop: dropping,
+        overlap: 2
+    })
+    .on('dropactivate', dragOver)
+    .on('dragstart', dragging)
+    .on('dragmove', dragging)
+    .on('dragend', dragging)
