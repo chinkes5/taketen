@@ -42,23 +42,23 @@ function removeCells(cell1ID, cell2ID) {
     document.getElementById(cell2ID).remove();
 };
 
-function showSuccess(source, target, addPoints){
+function showSuccess(source, target, addPoints) {
     //make flashy-flashy green lights here!
-    console.log(source.innerHTML + ' and ' + target.innerHTML +' matched :-)' )
+    console.log(source.innerHTML + ' and ' + target.innerHTML + ' matched :-)')
     setScore("score", addPoints);
     removeCells(source.id, target.id);
 };
 
-function showFailure(source, target, reasonCode){
+function showFailure(source, target, reasonCode) {
     //make flashy-flashy red lights here.
-    switch(reasonCode){
+    switch (reasonCode) {
         case 0:
-            console.log(source.innerHTML + ' and ' + target.innerHTML +' did not match :-(' );
+            console.log(source.innerHTML + ' and ' + target.innerHTML + ' did not match :-(');
             break;
         case 1:
             console.log('cells were too far apart :-(');
             break;
-    };    
+    };
     source.classList.add('wrong');
     target.classList.add('wrong');
 };
@@ -66,7 +66,7 @@ function showFailure(source, target, reasonCode){
 function evaluateDrop(source, target) {
     startPosition = source.getBoundingClientRect();
     endPosition = target.getBoundingClientRect();
-    if(rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize)){
+    if (rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize)) {
         switch (valueMatch(source.innerHTML, target.innerHTML)) {
             case 'ten':
                 source.classList.add('right');
@@ -89,7 +89,7 @@ function evaluateDrop(source, target) {
 };
 
 //functions to get the game play events to execute the logic
-function dragging(event){
+function dragging(event) {
     event.target.classList.add('over');
     event.target.classList.remove('under');
     event.target.classList.remove('wrong');
@@ -97,23 +97,23 @@ function dragging(event){
     return false;
 };
 
-function dragOver(event){
+function dragOver(event) {
     event.preventDefault();
     event.target.classList.add('under')
     event.target.classList.remove('wrong');
 };
 
-function dragOut(event){
+function dragOut(event) {
     event.preventDefault();
     event.target.classList.remove('under');
     event.target.classList.remove('wrong');
 };
 
-function dropping(event){
+function dropping(event) {
     event.preventDefault();
-    if(dragSource !== event.target){
+    if (dragSource !== event.target) {
         //can't drop on yourself!
-        evaluateDrop(dragSource,event.target);
+        evaluateDrop(dragSource, event.target);
     }
     event.target.classList.remove('under');
     dragSource.classList.remove('under');
@@ -151,7 +151,7 @@ document.getElementById("score").innerHTML = 0;
 //set the boxsize to use when evaluating proximity
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-    //loop thru the game pieces and add the drag 'n drop events
+//loop thru the game pieces and add the drag 'n drop events
 [...document.getElementsByClassName("gamePiece")].forEach(element => {
     element.draggable = true;
     element.addEventListener('dragover', dragOver);
