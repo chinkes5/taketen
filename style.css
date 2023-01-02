@@ -72,6 +72,7 @@ body{
     grid-row-end: 2;
     grid-column-end: 2;
     padding: 5px;
+    overflow: hidden;
 }
 
 .column {
