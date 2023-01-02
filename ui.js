@@ -9,4 +9,6 @@ function closeNav() {
 }
 
 document.getElementsByClassName("closebtn").addEventListener('click', closeNav)
+document.getElementsByClassName("closebtn").addEventListener('touchstart', closeNav)
 document.getElementsByClassName("openbtn").addEventListener('click', openNav)
+document.getElementsByClassName("openbtn").addEventListener('touchstart', openNav)
