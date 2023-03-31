@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #gameArea {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .gamePiece {
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            cursor: move;
+            width: 3em;
+            height: 2em;
+            margin: 3px;
+            touch-action: none;
+            /* user-select: none; */
+        }
+
+        .wrong {
+            background-color: red;
+        }
+    </style>
+    <title>Take Ten Game</title>
+</head>
+
+<body>
+    <div id="bodyCell">
+        <div id="gameArea"></div>
+    </div>
+    <script>
+        //game table will be 6 columns by 20 rows, 
+        //make each column with 20 random numbers between 1 and 9
+        let gameTable = [
+            column0 = Array.from({
+                length: 5
+            }, () => Math.floor(Math.random() * 9) + 1),
+            column1 = Array.from({
+                length: 5
+            }, () => Math.floor(Math.random() * 9) + 1),
+        ];
+
+        // loop the outer array to build the columns
+        let text = ""
+        for (let i = 0; i < gameTable.length; i++) {
+            // get the size of the inner array
+            var innerArrayLength = gameTable[i].length;
+            text += '<div class=column>'; // + i + '>'
+            // loop the inner array to build the rows
+            for (let j = 0; j < innerArrayLength; j++) {
+                //make the game table into HTML to be displayed
+                text += '<div draggable="true" class=gamePiece id=' + i + '-' + j + ' \
+        >' + gameTable[i][j] + '</div>';
+            }
+            text += '</div>';
+        };
+        //put the pieces into the game area on the HTML page
+        document.getElementById("gameArea").innerHTML += text;
+
+        //set the boxsize to use when evaluating proximity
+        let boxsize = document.getElementById('0-0').getBoundingClientRect();
+
+        // Select the element that you want to respond to touch events
+        const element = document.getElementById("0-0");
+
+        var startX=0, startY=0;
+        function dragging(event) {
+            // Prevent default touch action (such as scrolling) on the element
+            event.preventDefault();
+            // Your code to handle the touchmove event goes here
+            event.target.classList.add('wrong');
+            console.log("touch move: " + event.touches.length);
+
+            var deltaX = event.changedTouches[0].pageX - startX;
+            var deltaY = event.changedTouches[0].pageY - startY;
+            event.target.style.left = event.target.offsetLeft + deltaX + 'px';
+            event.target.style.top = event.target.offsetTop + deltaY + 'px';
+            //reset start-position for next frame/iteration
+            startX = event.changedTouches[0].pageX;
+            startY = event.changedTouches[0].pageY;
+        }
+
+        function dragEnd(event) {
+            // Prevent default touch action (such as scrolling) on the element
+            event.preventDefault();
+            // Your code to handle the touchend event goes here
+            event.target.classList.remove('wrong');
+            console.log("touch end");
+        }
+        // Add an event listener for touchstart event
+        element.addEventListener("touchstart", function (event) {
+            // Prevent default touch action (such as scrolling) on the element
+            event.preventDefault();
+            // Your code to handle the touchstart event goes here
+            console.log("touch start");
+            startX = event.changedTouches[0].pageX;
+            startY = event.changedTouches[0].pageY;
+        });
+
+        // Add an event listener for touchend event
+        element.addEventListener("touchend", dragEnd);
+        element.addEventListener("dropping", dragEnd);
+
+        let currentDroppable = null;
+
+        // Add an event listener for touchmove event
+        element.addEventListener("touchmove", dragging);
+        element.addEventListener("dragging", dragging);
+    </script>
+</body>
+
+</html>
