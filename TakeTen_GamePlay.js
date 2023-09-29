@@ -1,5 +1,5 @@
 //#################################
-//## copyright 2022 John Chinkes ##
+//## copyright 2023 John Chinkes ##
 //#################################
 
 //functions to make the game logic
@@ -119,6 +119,16 @@ function dropping(event) {
     dragSource.classList.remove('under');
 }
 
+function handleTouchStart(event) {
+    // Prevent default touch action (such as scrolling) on the element
+    event.preventDefault();
+
+    // Get the starting coordinates of the touch
+    touchStartX = event.changedTouches[0].pageX;
+    touchStartY = event.changedTouches[0].pageY;
+}
+
+
 //game table will be 6 columns by 20 rows, 
 //make each column with 20 random numbers between 1 and 9
 let gameTable = [
@@ -158,4 +168,7 @@ let boxsize = document.getElementById('0-0').getBoundingClientRect();
     element.addEventListener('drag', dragging);
     element.addEventListener('dragleave', dragOut);
     element.addEventListener('drop', dropping);
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchmove', dragging);
+    element.addEventListener('touchend', dragOut);
 });

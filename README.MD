@@ -1,2 +1,2 @@
 # Take Ten
-This is a small game mostly in Javascript. The sidebar of the page should explain how to play. The js file should explain what's going on with the code. There isn't any explaination of the styles in use.
+This is a small game mostly in Javascript. The sidebar of the page should explain how to play. The js file should explain what's going on with the code. There isn't any explanation of the styles in use.
