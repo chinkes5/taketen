@@ -1,174 +1,175 @@
-//#################################
-//## copyright 2023 John Chinkes ##
-//#################################
-
-//functions to make the game logic
-function rightProximity(row1, column1, row2, column2, boxsize) {
-    let row = false;
-    let column = false;
-    //eval each row and column separately but both must be true to pass
-    let thresholdX = boxsize.width * 1.7;
-    if (thresholdX > (row1 - row2) && -thresholdX < (row1 - row2)) {
-        row = true;
-    }
-    let thresholdY = boxsize.height * 1.7;
-    if (thresholdY > (column1 - column2) && -thresholdY < (column1 - column2)) {
-        column = true;
-    }
-    //logical conjunction for a set of Boolean operands will be true 
-    //if and only if all the operands are true. Otherwise it will be false.
-    return row && column
-};
-
-function valueMatch(cell1, cell2) {
-    if (parseInt(cell1) + parseInt(cell2) == 10) {
-        // console.log('value matched as total of 10');
-        return 'ten';
-    }
-    if (cell1 == cell2) {
-        // console.log('value matched as pair');
-        return 'pair';
-    }
-    return false;
-};
-
-function setScore(element, addPoints) {
-    score = document.getElementById(element).innerHTML;
-    document.getElementById(element).innerHTML = parseInt(score) + addPoints;
-};
-
-function removeCells(cell1ID, cell2ID) {
-    document.getElementById(cell1ID).remove();
-    document.getElementById(cell2ID).remove();
-};
-
-function showSuccess(source, target, addPoints) {
-    //make flashy-flashy green lights here!
-    console.log(source.innerHTML + ' and ' + target.innerHTML + ' matched :-)')
-    setScore("score", addPoints);
-    removeCells(source.id, target.id);
-};
-
-function showFailure(source, target, reasonCode) {
-    //make flashy-flashy red lights here.
-    switch (reasonCode) {
-        case 0:
-            console.log(source.innerHTML + ' and ' + target.innerHTML + ' did not match :-(');
-            break;
-        case 1:
-            console.log('cells were too far apart :-(');
-            break;
-    };
-    source.classList.add('wrong');
-    target.classList.add('wrong');
-};
-
-function evaluateDrop(source, target) {
-    startPosition = source.getBoundingClientRect();
-    endPosition = target.getBoundingClientRect();
-    if (rightProximity(startPosition.x, startPosition.y, endPosition.x, endPosition.y, boxsize)) {
-        switch (valueMatch(source.innerHTML, target.innerHTML)) {
-            case 'ten':
-                source.classList.add('right');
-                target.classList.add('right');
-                showSuccess(source, target, 10)
-                break;
-            case 'pair':
-                source.classList.add('right');
-                target.classList.add('right');
-                showSuccess(source, target, 8)
-                break;
-            default:
-                showFailure(source, target, 0)
-                break;
-        };
-    }
-    else {
-        showFailure(source, target, 1)
-    };
-};
-
-//functions to get the game play events to execute the logic
-function dragging(event) {
-    event.target.classList.add('over');
-    event.target.classList.remove('under');
-    event.target.classList.remove('wrong');
-    dragSource = event.target
-    return false;
-};
-
-function dragOver(event) {
-    event.preventDefault();
-    event.target.classList.add('under')
-    event.target.classList.remove('wrong');
-};
-
-function dragOut(event) {
-    event.preventDefault();
-    event.target.classList.remove('under');
-    event.target.classList.remove('wrong');
-};
-
-function dropping(event) {
-    event.preventDefault();
-    if (dragSource !== event.target) {
-        //can't drop on yourself!
-        evaluateDrop(dragSource, event.target);
-    }
-    event.target.classList.remove('under');
-    dragSource.classList.remove('under');
-}
+// Keep track of the element being touched/dragged
+let touchSourceElement = null;
+// Keep track of the element currently under the finger
+let currentTouchTarget = null;
 
 function handleTouchStart(event) {
-    // Prevent default touch action (such as scrolling) on the element
+    // Prevent default touch action (like scrolling)
+    event.preventDefault();
+    const target = event.target;
+    if (!target.classList.contains('gamePiece')) return; // Only drag game pieces
+
+    touchSourceElement = target;
+    touchSourceElement.classList.add('over'); // Style as being dragged
+    touchSourceElement.classList.remove('wrong');
+
+    // Optional: You might want to create a visual clone or slightly change
+    // the appearance of the source element here (e.g., lower opacity)
+    // For simplicity, we'll just use classes for now.
+
+    console.log("Touch Start:", touchSourceElement.id);
+}
+
+function handleTouchMove(event) {
+    if (!touchSourceElement) return;
+
+    // Prevent scrolling while dragging
     event.preventDefault();
 
-    // Get the starting coordinates of the touch
-    touchStartX = event.changedTouches[0].pageX;
-    touchStartY = event.changedTouches[0].pageY;
+    // Get current touch coordinates
+    const touchX = event.changedTouches[0].pageX;
+    const touchY = event.changedTouches[0].pageY;
+
+    // Find the element directly under the finger
+    // Temporarily hide the source element so elementFromPoint doesn't pick it
+    touchSourceElement.style.visibility = 'hidden';
+    let elementUnderFinger = document.elementFromPoint(touchX, touchY);
+    touchSourceElement.style.visibility = 'visible'; // Make it visible again
+
+    // Clear previous target styling
+    if (currentTouchTarget && currentTouchTarget !== elementUnderFinger) {
+        currentTouchTarget.classList.remove('under');
+        currentTouchTarget.classList.remove('wrong');
+    }
+
+    if (elementUnderFinger && elementUnderFinger.classList.contains('gamePiece') && elementUnderFinger !== touchSourceElement) {
+        // We are over a potential target
+        currentTouchTarget = elementUnderFinger;
+        currentTouchTarget.classList.add('under'); // Style as potential drop target
+        currentTouchTarget.classList.remove('wrong');
+        console.log("Touch Move Over:", currentTouchTarget.id);
+    } else {
+        // We are not over a valid target
+        currentTouchTarget = null;
+    }
+
+    // Optional: Move a visual representation of the element
+    // This is more complex, often involves cloning the element and updating its
+    // position style (e.g., position: absolute, left: touchX, top: touchY)
+    // For now, we focus on identifying the target.
+}
+
+function handleTouchEnd(event) {
+    if (!touchSourceElement) return;
+
+    event.preventDefault(); // Prevent potential ghost clicks
+
+    console.log("Touch End");
+
+    // Clear dragging styles from source
+    touchSourceElement.classList.remove('over');
+
+    // Check if we ended over a valid target
+    if (currentTouchTarget) {
+        console.log("Dropping onto:", currentTouchTarget.id);
+        currentTouchTarget.classList.remove('under'); // Clear target styling
+        // Call the evaluation logic
+        evaluateDrop(touchSourceElement, currentTouchTarget);
+    } else {
+        console.log("Touch ended, no valid target.");
+        // Optional: Add visual feedback if the drop was invalid (e.g., animate back)
+    }
+
+    // Reset state variables
+    touchSourceElement = null;
+    currentTouchTarget = null;
+}
+
+// --- Keep your existing evaluateDrop, valueMatch, etc. functions ---
+
+// --- Update Event Listeners ---
+//loop thru the game pieces and add the drag 'n drop AND touch events
+[...document.getElementsByClassName("gamePiece")].forEach(element => {
+    element.draggable = true; // Keep for desktop drag & drop
+
+    // Mouse Events
+    element.addEventListener('dragstart', dragging); // Use dragstart instead of drag for source
+    element.addEventListener('dragover', dragOver);
+    element.addEventListener('dragleave', dragOut);
+    element.addEventListener('drop', dropping);
+    // Note: You might need a dragend listener to clean up styles if a drag is cancelled
+    // element.addEventListener('dragend', (event) => {
+    //     event.target.classList.remove('over');
+    //     // Find any elements with 'under' and remove it if needed
+    // });
+
+
+    // Touch Events
+    element.addEventListener('touchstart', handleTouchStart, { passive: false }); // Need passive: false to call preventDefault
+    element.addEventListener('touchmove', handleTouchMove, { passive: false });  // Need passive: false to call preventDefault
+    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchcancel', handleTouchEnd); // Handle cancelled touches too
+});
+
+// --- Minor change in dragging for consistency ---
+function dragging(event) {
+    // event.target.classList.add('over'); // Moved this to handleTouchStart for touch
+    event.target.classList.remove('under');
+    event.target.classList.remove('wrong');
+    // For mouse drag, set the dataTransfer to allow the drop
+    event.dataTransfer.setData('text/plain', event.target.id); // Good practice
+    event.dataTransfer.effectAllowed = 'move';
+    dragSource = event.target; // Keep using dragSource for mouse D&D
+    dragSource.classList.add('over'); // Add 'over' style on drag start for mouse
+    // return false; // Not needed with dragstart
+};
+
+// --- Adjust dropping for mouse ---
+function dropping(event) {
+    event.preventDefault();
+    const target = event.target;
+    target.classList.remove('under'); // Clean up target style
+
+    if (dragSource && dragSource !== target) { // Check dragSource is set
+        //can't drop on yourself!
+        evaluateDrop(dragSource, target);
+    }
+
+    if (dragSource) {
+        dragSource.classList.remove('over'); // Clean up source style
+    }
+    dragSource = null; // Reset dragSource for mouse D&D
+}
+
+// --- Adjust dragOut for mouse ---
+function dragOut(event) {
+    event.preventDefault();
+    if (event.target.classList.contains('gamePiece')) {
+        event.target.classList.remove('under');
+        event.target.classList.remove('wrong');
+    }
+}
+
+// --- Adjust dragOver for mouse ---
+function dragOver(event) {
+    event.preventDefault(); // Necessary to allow dropping
+    if (event.target.classList.contains('gamePiece') && event.target !== dragSource) {
+        event.dataTransfer.dropEffect = 'move'; // Indicate a move is possible
+        event.target.classList.add('under');
+        event.target.classList.remove('wrong');
+    } else {
+        event.dataTransfer.dropEffect = 'none'; // Indicate cannot drop here
+    }
 }
 
 
-//game table will be 6 columns by 20 rows, 
-//make each column with 20 random numbers between 1 and 9
-let gameTable = [
-    column0 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
-    column1 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
-    column2 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
-    column3 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
-    column4 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
-    column5 = Array.from({ length: 20 }, () => Math.floor(Math.random() * 9) + 1),
-];
+// --- Your existing game setup code ---
+// ... (gameTable creation, HTML generation, etc.) ...
 
-// loop the outer array to build the columns
-let text = ""
-for (let i = 0; i < gameTable.length; i++) {
-    // get the size of the inner array
-    var innerArrayLength = gameTable[i].length;
-    text += '<div class=column>'; // + i + '>'
-    // loop the inner array to build the rows
-    for (let j = 0; j < innerArrayLength; j++) {
-        //make the game table into HTML to be displayed
-        text += '<div class=gamePiece id=' + i + '-' + j + ' \
-        >' + gameTable[i][j] + '</div>';
-    }
-    text += '</div>';
-};
-//put the pieces into the game area on the HTML page
-document.getElementById("gameArea").innerHTML += text;
-document.getElementById("score").innerHTML = 0;
-
-//set the boxsize to use when evaluating proximity
+// Make sure boxsize is calculated after elements are in the DOM
 let boxsize = document.getElementById('0-0').getBoundingClientRect();
 
-//loop thru the game pieces and add the drag 'n drop events
-[...document.getElementsByClassName("gamePiece")].forEach(element => {
-    element.draggable = true;
-    element.addEventListener('dragover', dragOver);
-    element.addEventListener('drag', dragging);
-    element.addEventListener('dragleave', dragOut);
-    element.addEventListener('drop', dropping);
-    element.addEventListener('touchstart', handleTouchStart);
-    element.addEventListener('touchmove', dragging);
-    element.addEventListener('touchend', dragOut);
-});
+// ... (rest of your code like setScore, removeCells, etc.)
+
+// Global variable for mouse drag source (keep separate from touch)
+let dragSource = null;
